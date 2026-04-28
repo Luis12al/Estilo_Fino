@@ -5,11 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "npx vite build",
     "preview": "vite preview"
   },
   "dependencies": {
-    "build": "^0.1.4",
     "clsx": "^2.0.0",
     "date-fns": "^2.30.0",
     "lucide-react": "^0.294.0",
