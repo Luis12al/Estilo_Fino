@@ -4,7 +4,7 @@ services:
     name: estilo-fino-api
     runtime: node
     plan: free
-    region: oregon
+    region: oregon  # ← Web Service SÍ puede tener region
     buildCommand: cd backend && npm install && npm run build && npx prisma generate && npx prisma migrate deploy
     startCommand: cd backend && npm start
     envVars:
@@ -32,7 +32,7 @@ services:
     name: estilo-fino-web
     runtime: static
     plan: free
-    region: oregon
+    # ← QUITADO: region (Static Sites no pueden tener region)
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: ./frontend/dist
     envVars:
@@ -42,4 +42,4 @@ services:
 databases:
   - name: estilo-fino-db
     plan: free
-    region: oregon
+    region: oregon  # ← Database SÍ puede tener region
