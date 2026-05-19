@@ -35,6 +35,7 @@ services:
     # ← QUITADO: region (Static Sites no usan region)
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: ./frontend/dist
+    publishPath: ./frontend/dist
     envVars:
       - key: VITE_API_URL
         value: https://estilo-fino-api.onrender.com/api
