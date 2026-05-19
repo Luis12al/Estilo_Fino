@@ -1,0 +1,391 @@
+backend/
+├── prisma/✅
+│   ├── schema.prisma✅
+│   ├── migrations/✅
+│   └── seed.ts✅
+├── src/
+│   ├── config/✅
+│   │   ├── database.ts✅
+│   │   └── env.ts✅
+│   ├── modules/✅                    ← NUEVO: un módulo por dominio
+│   │   ├── auth/✅                   ← Login, registro, JWT, refresh
+│   │   │   ├── auth.controller.ts✅ 
+│   │   │   ├── auth.service.ts✅ 
+│   │   │   ├── auth.routes.ts✅ 
+│   │   │   ├── auth.dto.ts✅         ← Zod schemas
+│   │   │   └── auth.types.ts✅ 
+│   │   ├── users/✅                  ← Perfiles, gestión de usuarios
+│   │   │   ├── user.controller.ts✅
+│   │   │   ├── user.service.ts✅
+│   │   │   ├── user.routes.ts✅
+│   │   │   └── user.dto.ts✅
+│   │   ├── barbers/✅             ← Config horarios, descansos, días
+│   │   │   ├── barber.controller.ts✅
+│   │   │   ├── barber.service.ts✅
+│   │   │   ├── barber.routes.ts✅
+│   │   │   └── barber.dto.ts✅
+│   │   ├── appointments/✅       ← Reservas, disponibilidad, estados
+│   │   │   ├── appointment.controller.ts✅
+│   │   │   ├── appointment.service.ts✅
+│   │   │   ├── appointment.routes.ts✅
+│   │   │   └── appointment.dto.ts✅
+│   │   ├── services/✅               ← CRUD servicios
+│   │   │   ├── service.controller.ts✅
+│   │   │   ├── service.service.ts✅
+│   │   │   ├── service.routes.ts✅
+│   │   │   └── service.dto.ts✅
+│   │   ├── offers/✅                 ← CRUD ofertas
+│   │   │   ├── offers.controller.ts✅
+│   │   │   ├── offers.service.ts✅
+│   │   │   ├── offers.routes.ts✅
+│   │   │   └── offers.dto.ts✅
+│   │   └── products/✅               ← CRUD productos
+│   │   │   ├── products.controller.ts✅
+│   │   │   ├── products.service.ts✅
+│   │   │   ├── products.routes.ts✅
+│   │   │   └── products.dto.ts✅
+│   ├── shared/✅                     ← Código transversal
+│   │   ├── middlewares/✅
+│   │   │   ├── auth.middleware.ts✅      ← verifyJWT
+│   │   │   ├── role.middleware.ts✅      ← restrictTo('BARBER', 'CLIENT')
+│   │   │   ├── validate.middleware.ts✅  ← validar Zod schemas
+│   │   │   └── error.middleware.ts✅     ← manejo global de errores
+│   │   ├── utils/✅
+│   │   │   ├── jwt.utils.ts✅            ← generar/verificar tokens
+│   │   │   ├── password.utils.ts✅       ← bcrypt hash/compare
+│   │   │   ├── date.utils.ts✅           ← helpers de fechas
+│   │   │   └── api-response.utils.ts✅   ← formato respuestas
+│   │   └── types/✅
+│   │       └── express.d.ts✅            ← extensión Request.user
+│   ├── app.ts✅                      ← Express app (middlewares globales)
+│   └── server.ts✅                   ← Entry point
+├── tests/✅
+├── .env✅
+├── .env.example✅
+├── tsconfig.json✅
+└── package.json✅
+
+frontend/
+├── public/✅
+├── src/✅
+│   ├── api/✅                        ← Axios + interceptores
+│   │   ├── axios.config.ts✅         ← Instancia base, refresh token automático
+│   │   ├── auth.api.ts✅             ← Login, registro, refresh
+│   │   ├── appointment.api.ts✅      ← Reservas, disponibilidad
+│   │   ├── barber.api.ts✅           ← Horarios, descansos
+│   │   ├── service.api.ts✅          ← CRUD servicios
+│   │   ├── offer.api.ts✅            ← CRUD ofertas
+│   │   ├── user.api.ts ✅
+│   │   └── product.api.ts✅          ← CRUD productos
+│   ├── components/✅                 ← Atomic design
+│   │   ├── ui/✅                     ← Atómicos reutilizables
+│   │   │   ├── Button.tsx✅
+│   │   │   ├── Input.tsx✅
+│   │   │   ├── Modal.tsx✅
+│   │   │   ├── Card.tsx✅
+│   │   │   ├── Badge.tsx✅
+│   │   │   └── Loader.tsx✅
+│   │   ├── layout/✅                 ← Estructura de páginas
+│   │   │   ├── Navbar.tsx✅
+│   │   │   ├── Sidebar.tsx✅         ← Solo admin
+│   │   │   ├── Footer.tsx✅
+│   │   │   ├── AuthLayout.tsx✅      ← Layout login/registro
+│   │   │   ├── ClientLayout.tsx✅    ← Layout cliente (navbar simple)
+│   │   │   └── AdminLayout.tsx✅     ← Layout admin (sidebar + navbar)
+│   │   └── features/✅               ← Componentes de dominio
+│   │       ├── auth/✅
+│   │       │   ├── LoginForm.tsx✅
+│   │       │   └── RegisterForm.tsx✅
+│   │       ├── booking/✅            ← Agenda/disponibilidad
+│   │       │   ├── BarberSelector.tsx✅
+│   │       │   ├── DatePicker.tsx✅
+│   │       │   ├── TimeSlotGrid.tsx✅
+│   │       │   ├── ServiceSelector.tsx✅
+│   │       │   ├── BarberAgendaModal.tsx✅
+│   │       │   └── BookingSummary.tsx✅
+│   │       ├── admin/✅              ← Panel admin
+│   │       │   ├── AppointmentCard.tsx✅
+│   │       │   ├── AppointmentList.tsx✅
+│   │       │   ├── BarberProfileCard.tsx ✅
+│   │       │   ├── StatusBadge.tsx✅
+│   │       │   ├── ScheduleConfig.tsx✅
+│   │       │   └── BreakManager.tsx✅
+│   │       └── services/✅
+│   │           └── ServiceList.tsx✅
+│   ├── hooks/✅                      ← Custom hooks
+│   │   ├── useAuth.ts✅              ← Login, logout, user actual
+│   │   ├── useAvailability.ts✅      ← Fetch slots disponibles
+│   │   ├── useAppointments.ts✅      ← CRUD citas
+│   │   ├── useServices.ts✅          ← Fetch servicios
+│   │   ├── useBarberSchedule.ts✅
+│   │   ├── useBarberAppointments.ts✅
+│   │   ├── useBarberProfile.ts✅
+│   │   ├── useBookingServices.ts✅
+│   │   ├── useProfile.ts✅ 
+│   │   ├── useAuthInit.ts✅
+│   │   ├── useBarbers.ts✅
+│   │   └── useLocalStorage.ts✅      ← Persistencia simple
+│   ├── stores/✅                     ← Zustand
+│   │   ├── auth.store.ts✅           ← User, token, isAuthenticated, role
+│   │   ├── booking.store.ts✅        ← Barbero, fecha, servicios, slot seleccionado
+│   │   └── ui.store.ts✅             ← Modales, toasts, loaders globales
+│   ├── pages/✅                     ← Rutas de la app
+│   │   ├── public/✅
+│   │   │   ├── Home.tsx✅            ← Landing page
+│   │   │   ├── Login.tsx✅
+│   │   │   └── Register.tsx✅
+│   │   ├── client/✅                 ← Protegido, rol CLIENT
+│   │   │   ├── Dashboard.tsx✅       ← Agenda principal
+│   │   │   ├── MyAppointments.tsx✅  ← Mis citas
+|   |   |   ├── Barbers.tsx✅
+|   |   |   ├── Booking.tsx✅
+│   │   │   └── Profile.tsx✅
+│   │   └── admin/✅                  ← Protegido, rol BARBER
+│   │       ├── Dashboard.tsx✅       ← Panel principal (citas del día)
+│   │       ├── Appointments.tsx✅    ← Gestión citas + historial
+│   │       ├── BarberProfile.tsx✅
+│   │       ├── Schedule.tsx✅        ← Config horarios
+│   │       ├── Services.tsx✅        ← CRUD servicios
+│   │       ├── Offers.tsx✅          ← CRUD ofertas
+│   │       └── Products.tsx✅        ← CRUD productos
+│   ├── router/✅                     ← React Router
+│   │   ├── index.tsx✅               ← Router principal
+│   │   ├── routes.ts✅               ← Definición de rutas
+│   │   └── guards/✅                 ← Protección por rol
+│   │       ├── AuthGuard.tsx✅       ← Redirige si no autenticado
+│   │       ├── RoleGuard.tsx✅       ← Redirige si rol no coincide
+│   │       └── PublicGuard.tsx✅     ← Redirige si YA autenticado
+│   ├── types/✅                      ← TypeScript global
+│   │   ├── auth.types.ts✅
+│   │   ├── appointment.types.ts✅
+│   │   ├── service.types.ts✅
+│   │   └── api.types.ts✅            ← ApiResponse<T>, ApiError
+│   ├── utils/✅                      ← Helpers
+│   │   ├── formatters.ts✅           ← Formato fechas, precios
+│   │   ├── validators.ts✅           ← Validaciones formularios
+│   │   └── constants.ts✅            ← Días semana, estados, etc.
+│   ├── App.jsx✅
+│   ├── index.css✅
+│   ├── vite-env.d.ts✅
+│   └── main.tsx✅
+├── .env✅                            ← VITE_API_URL=http://localhost:4000/api
+├── tsconfig.json✅
+├── package-lock.json✅
+├── postcss.config.js✅
+├── index.html✅
+├── .nvmrc✅
+├── vite.config.ts✅
+├── tailwind.config.js✅
+├── tsconfig.node.json✅
+└── package.json✅
+
+# ⚙️ TECNOLOGÍAS QUE QUIERO USAR
+
+Sugiere mejoras si lo consideras necesario, pero prioriza este stack:
+
+* Frontend: React + Vite + Tailwind + (opcional: Material UI)
+* Backend: Node.js + Express
+* Base de datos: PostgreSQL
+* ORM: Prisma
+* Autenticación: JWT
+* Estado global: Zustand o Redux
+
+# DISEÑO DE BASE DE DATOS (PostgreSQL + Prisma)
+Principios aplicados:
+Normalización 3NF (sin redundancia innecesaria)
+Soft deletes (campo deletedAt en tablas críticas)
+Timestamps automáticos (createdAt, updatedAt)
+Índices estratégicos en campos de búsqueda frecuente
+Enums tipados para estados y roles
+JSONB solo donde aporta flexibilidad real
+
+
+# Estilos para el proyecto
+
+| Elemento         | Valor                            |
+| ---------------- | -------------------------------- |
+| Fondo            | `#0F0F0F`                        |
+| Tarjetas         | `#1E1E1E` con borde `#2A2A2A`    |
+| Sidebar          | `#1A1A1A` con borde `#2A2A2A`    |
+| Color primario   | `#C9A84C`                        |
+| Hover primario   | `#B8983F`                        |
+| Texto principal  | `#FFFFFF`                        |
+| Texto secundario | `#9CA3AF`                        |
+| Inputs           | `#252525` fondo, borde `#2A2A2A` |
+| Online           | `bg-green-500`                   |
+| Ocupado          | `bg-red-500`                     |
+| Border radius    | `12px` general, `16px` modales   |
+| Transiciones     | `300ms` suaves                   |
+
+
+# Orden de desarrollo de los modulos
+
+| Orden | Módulo                    | Backend            | Frontend                  |
+| ----- | ------------------------- | ------------------ | ------------------------- |
+| **1** | **Servicios**             | CRUD completo      | Selector múltiple con "+" |✅
+| **2** | **Barberos**              | Listar + perfil    | Tarjetas con horario      |✅
+| **3** | **Agenda/Disponibilidad** | Cálculo de slots   | Calendario dinámico       |✅
+| **4** | **Reserva de Citas**      | Crear cita         | Flujo completo            |✅
+| **5** | **Gestión Citas (Admin)** | Estados + acciones | Tarjetas con menú         |✅
+| **6** | **Ofertas**               | CRUD               | Visualización             |
+| **7** | **Productos**             | CRUD               | Tienda                    |
+
+
+
+# Contexto de  los modulos 
+
+1. Agendas de disponibilidad (Usuario-Cliente): El objetivo de este modulo es que el cliente pueda ver exactamente que espacio o cupo esta disponible el barbero para que pueda ir y recibir el servicio (Agendar cita básicamente), los horarios que manejan los barberos son de 9am a 9pm. CARACTERISTICAS DE ESTE MODULO: * Elección de barbero * Agenda de disponibilidad atractiva visualmente y dinámica (dependiendo del barbero mostrara su agenda de disponibilidad) * Menú de servicio (el menú de servicios es el punto 3) * El tiempo que demora del servicio (Se calcula automáticamente) 
+
+2. Registro de usuarios (Login): * Admin * Clientes 
+
+3. Servicios(Usuario-Cliente): menú de selección de los servicios, puede escoger varios dependiendo de cuantos escoja el servicio puede demorar mas o menos, normalmente el servicio (es el mismo menú de servicio para todos los barberos) * Precios de cortes para pelo: 20000 (1H) * Precios de cortes para cejas: 4000 (5 min) * Precios para barbas Barba: 8000 (10 min) * Pigmentación: 5000 (10 min) CARACTERISTICAS DE ESTE MODULO: * Botón "+" para agregar los servicios que el cliente requiera. 
+
+4. Menú de Ofertas (Usuario-Cliente): en este modulo el cliente podrá ver las ofertas o promociones disponibles 
+
+5. Ventas de Productos: Tienda interna donde la Barberia puede ofrecer productos para su venta. 
+
+----------------------------------------------------------------------------------------------------------- 
+
+1. Agendas de disponibilidad (Usuario-Admin): el objetivo de este modulo es que el barbero (Admin), pueda gestionar sus horarios de disponibilidad, y asi con cada usuario que sea un barbero, (esa será la agenda de disponibilidad que el cliente podrá ver en cada barbero). CARACTERISTICAS DEL MODULO: * Configuración de horario: poder seleccionar la hora en la que inicia, hasta la hora en la que finaliza y tambien si tiene tiempos de descanso. Ejemplo: tener en cuenta que mas o menos cada servicio dura entre 60min y 90min, si inicia de 9am a 9pm pero tiene un descanso entre las 12pm y 2pm. y ese horario será el mismo para todo el mes (amenos de que se cambie algún parámetro). * Que saque un promedio de cuantos cupos podrá atender el barbero dependiendo del horario. * Botón de disponibilidad, ósea si el barbero atenderá ese día o no. 
+
+2. Listado de servicios a clientes (Usuario-Admin): este modulo es para gestionar los clientes que tiene que atender el barbero, saber si todos los cupos están disponibles, la hora en que debe atender, el servicio que requiere dicho cliente, datos del cliente. CARACTERISTICAS DE ESTE MODULO: * Tarjetas donde se vea el servicio de cada cliente, información del cliente, hora de atención a ese cliente. * Menú desplegable en cada tarjeta con 4 botones distintos, "Inicio" (significa que inicio la atención a dicho cliente), "Finalizar" (significa que Finalizo la atención a dicho cliente y la tarjeta desaparece), "Cancelar"(Significa que se cancelo el servicio a ese cliente por x o y motivos cancelo y la tarjeta desaparece), "Extender" (Puede extender el servicio del cliente por 20min mas en caso de que hubiera demora). *Historial te atención donde queden guardados todos los servicios que han realizado. puede visualizarse mensual, semanal, diario. 
+
+3. Servicios (Usuario-Admin): en este modulo los barberos podrán gestionar los servicios que ofrecen, es el mismo servicio para todos se verán como tarjetas, y todos los servicios que sean agregados son los que verán los clientes. * Precios de cortes para pelo: 20000 (1H). * Precios de cortes para cejas: 4000 (5 min). * Precios para barbas Barba: 8000 (10 min). * Pigmentación: 5000 (10 min). CARACTERISTICAS DEL MODULO: * Podrán agregar, eliminar, editar un servicio. * Información de las tarjetas, nombre, precio, tiempo estimado, foto/imagen. 
+
+4. Menú de Ofertas (Usuario-Admin): en este modulo podrá gestionar las ofertas que ofrece la Barberia, es la misma para todos los barberos y esas ofertas que sean agregadas, son las que visualizaran los clientes. CARACTERISTICAS DEL MODULO: * Podrán agregar, eliminar, editar una oferta. * Información de las tarjetas, nombre, descripción, tiempo estimado de la oferta (indefinido o por tiempo establecido), foto/imagen, tipo de oferta(permanente, por tiempo limitado). 
+
+5. Ventas de Productos: En este modulo el Barbero podrá agregar un producto dentro de la tienda interna del software, es la misma para todos los barberos y todos los productos agregados son los que verán los clientes. CARACTERISTICAS DEL MODULO: * Podrán agregar, eliminar, editar un producto. * Información de las tarjetas, nombre, descripción, precio, tiempo estimado del producto (solo si es un producto limitado), foto/imagen, tipo de disponibilidad del producto(permanente o producto limitado), cantidad disponible, categoría (si es producto para cabello, barba, etc).
+
+# ✅ CHECKLIST
+[x] Selector de servicios estilizado (cliente)
+[x] CRUD de servicios estilizado (admin)
+[x] Modal con formulario
+[x] Hover effects y transiciones
+[x] Home con hero, stats, servicios preview, CTA, footer
+[x] Login funcional y conectado con base de datos, "Recordarme", "Olvidé contraseña"
+[x] Register funcional, validaciones visuales
+[x] Dashboard Cliente con navbar, banner, stats, barberos cards, ofertas
+[x] Dashboard Barbero con sidebar fija, stats, citas con acciones (Iniciar, Finalizar, Cancelar, Extender)
+[x] Fotos de barberos más grandes
+[x] Estado online/offline en tiempo real
+[x] Rating con estrellas doradas
+[x] Badge de "Experto"
+[x] Horario destacado en tarjeta
+[x] Animaciones hover/selection
+[x] Banner de confirmación al seleccionar
+[x] Navbar sticky con glass effect
+[x] Algoritmo de slots con manejo de breaks, dayOffs, citas existentes
+[x] Transacción atómica Serializable para evitar double-booking
+[x] Validación completa de horarios laborales y descansos
+[x] Snapshots de precios/duraciones en AppointmentService
+[x] Endpoint GET /api/appointments/availability?barberId=X&date=Y&duration=Z
+[x] appointment.api.ts con getAvailability y createAppointment
+[x] useAvailability hook con loading, error, retry
+[x] ClientBooking.tsx sin TODOs, conectado al backend
+[x] Flujo completo: Barbero → Servicios → Fecha/Slots → Confirmar → Crear cita → Redirigir
+[x] Manejo de errores en cada paso
+[x] Estado de carga (creating) con spinner
+[x] Backend: Motor de disponibilidad + transacciones atómicas + gestión de agenda
+[x] Frontend Cliente: Flujo de 4 pasos + popup "Ver Agenda"
+[x] Frontend Admin: Panel de configuración de disponibilidad
+[x] Backend: appointment.controller.ts con barberService importado y método getMyBarberAppointments
+[x] Backend: appointment.routes.ts con ruta GET /appointments/barber/me
+[x] Frontend: appointment.api.ts con getMyBarberAppointments
+[x] Frontend: offer.api.ts creado
+[x] Frontend: Ambos dashboards funcionando con datos reales
+[x]Componente	Estado
+# SERVICIOS
+[x]Hook useServices.ts — Tipos corregidos, modo público/admin
+[x]ServiceSelector.tsx — Conectado, sin destruir diseño existente
+[x]Backend service.controller.ts — Endpoints público/admin correctos
+[x]Backend service.routes.ts — Protección de rutas verificada
+[x]Flujo booking paso 2 — Servicios visibles y seleccionables
+
+
+# ESTADO ACTUAL DEL MÓDULO SERVICIOS✅
+| Componente                                      | Estado |
+| ----------------------------------------------- | ------ |
+| Backend DTO con validación flexible             | ✅     |
+| Backend Service con seguridad de propiedad      | ✅     |
+| Backend Controller con CRUD completo            | ✅     |
+| Backend Routes corregidas (PUT en vez de PATCH) | ✅     |
+| Frontend API con todos los métodos              | ✅     |
+| Frontend Hook admin con mutaciones              | ✅     |
+| Frontend Panel CRUD conectado a API             | ✅     |
+| Soft delete / Reactivate                        | ✅     |
+
+
+# ESTADO ACTUAL DEL MÓDULO BOOKING✅
+| Componente                               | Estado |
+| ---------------------------------------- | ------ |
+| Backend disponibilidad (slots)           | ✅      |
+| Backend crear cita (transacción atómica) | ✅      |
+| Frontend flujo booking 4 pasos           | ✅      |
+| Popup "Ver Agenda" cliente               | ✅      |
+| Panel Admin configuración horarios       | ✅      |
+| Dashboard Cliente con datos reales       | ✅      |
+| Dashboard Barbero con datos reales       | ✅      |
+| Seguridad (barbero solo edita su agenda) | ✅      |
+
+# ESTADO ACTUAL DEL MODULO DE CITAS(Admin)✅
+| Componente                                              | Estado  |
+| ------------------------------------------------------- | ------  |
+| Backend: `updateStatus` (Iniciar, Finalizar, Cancelar)  | ✅      |
+| Backend: `extend` (+20min con validación de conflictos) | ✅      |
+| Backend: `getTodayStats`                                | ✅      |
+| Frontend: `appointment.api.ts` (métodos nuevos)         | ✅      |
+| Frontend: `useBarberAppointments.ts`                    | ✅      |
+| Frontend: `AdminDashboard.tsx` con acciones reales      | ✅      |
+| Listado completo con filtros (estado, fecha, búsqueda)    ✅      |
+| Componente                                                                       | Estado |
+| -------------------------------------------------------------------------------- | ------ |
+| Migración Prisma (`clientId` opcional + `guestName`/`guestPhone`)                | ✅      |
+| DTO `manualBookingSchema` con validación Zod estricta                            | ✅      |
+| `appointment.service.ts` — `createManual()` con transacción atómica serializable | ✅      |
+| `appointment.controller.ts` — `createManual()` + eliminación de `quickBook`      | ✅      |
+| `appointment.routes.ts` — `POST /barber/manual` protegido                        | ✅      |
+| `appointment.api.ts` — `createManual()` + interfaz `Appointment` actualizada     | ✅      |
+| `useBarberAppointments.ts` — `createManual()` con loading y error handling       | ✅      |
+| `DatePicker.tsx` — `onSelectDate` acepta `Date \| null`                          | ✅      |
+| `Appointments.tsx` — Página completa con modal 4 pasos + listado + filtros       | ✅      |
+| `AdminDashboard.tsx` — Soporte walk-in en citas del día                          | ✅      |
+
+| Acciones rápidas (Confirmar, Iniciar, Finalizar, Cancelar, Extende)|  ✅     |
+| Vista de lista con info completa                                   |  ✅     |
+| Modal placeholder para agendar cita                                |  ✅     |
+| Backend endpoints adicionales                                      |  ✅     |
+
+
+
+# 📋 Plan del Módulo de Citas (Admin)
+
+| Fase                      |Descripción                    |
+| ------------------------- |--------------------------------------------------  |
+| **Fase 1: Backend**       | Endpoints para cambiar  estados de citas (`IN_PROGRESS`, `COMPLETED`, `CANCELLED`)+ endpoint `POST /appointments/:id/extend` |
+| **Fase 2: Base de datos** | Verificar que `AppointmentStatus` enum incluya todos los estados necesarios                                                  |
+| **Fase 3: Frontend**      | Dashboard barbero con tarjetas de citas, menú desplegable con acciones (Iniciar, Finalizar, Cancelar, Extender)              |
+| **Fase 4: Integración**   | Conectar con `appointment.api.ts` y hooks existentes                                                                         |
+| **Fase 5: Historial**     | Filtros por día/semana/mes + persistencia de citas finalizadas/canceladas                                                    |
+
+
+# Estado actual del proyecto
+
+| #  | Módulo                         | Estado                 |
+| -- | ------------------------------ | ---------------------- |
+| 1  | **Autenticación**              | ✅ Backend + Frontend   |
+| 2  | **Servicios**                  | ✅ Backend + Frontend   |
+| 3  | **Barberos**                   | ✅ Backend + Frontend   |
+| 4  | **Agenda/Disponibilidad**      | ✅ Backend + Frontend   |
+| 5  | **Reserva de Citas** (cliente) | ✅ Backend + Frontend   |
+| 6  | **Gestión Citas (Admin)**      | ✅ Backend + Frontend   |
+| 6a | *Agendamiento manual walk-in*  | ✅ **Completado ahora** |
+
+
+
+| # | Módulo                                      | Estado      |
+| - | ------------------------------------------- | ----------- |
+| 3 | **Revisión General** (gaps + documentación) | ⬜ Pendiente |
+| 4 | **Ofertas** (CRUD + visualización)          | ⬜ Pendiente |
+| 5 | **Productos** (CRUD + Tienda)               | ⬜ Pendiente |
+| 6 | **Notificaciones** (Recordatorios)          | ⬜ Pendiente |
+| 7 | **Deploy/Testing**                          | ⬜ Pendiente |
