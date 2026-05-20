@@ -62,6 +62,7 @@ export declare class AppointmentService {
                 barberId: string | null;
                 description: string | null;
                 price: import("@prisma/client/runtime/library").Decimal;
+                imageUrl: string | null;
                 durationMinutes: number;
             };
         } & {
@@ -106,6 +107,7 @@ export declare class AppointmentService {
                 barberId: string | null;
                 description: string | null;
                 price: import("@prisma/client/runtime/library").Decimal;
+                imageUrl: string | null;
                 durationMinutes: number;
             };
         } & {
@@ -164,6 +166,7 @@ export declare class AppointmentService {
                 barberId: string | null;
                 description: string | null;
                 price: import("@prisma/client/runtime/library").Decimal;
+                imageUrl: string | null;
                 durationMinutes: number;
             };
         } & {
@@ -216,6 +219,7 @@ export declare class AppointmentService {
                 barberId: string | null;
                 description: string | null;
                 price: import("@prisma/client/runtime/library").Decimal;
+                imageUrl: string | null;
                 durationMinutes: number;
             };
         } & {

@@ -111,9 +111,10 @@ model Service {
   description         String?
   price               Decimal              @db.Decimal(10, 2)
   durationMinutes     Int                  @map("duration_minutes")
+  imageUrl            String?              @map("image_url") @db.VarChar(500)
   isActive            Boolean              @default(true) @map("is_active")
-  createdAt           DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt           DateTime             @updatedAt @map("updated_at") @db.Timestamptz(6)
+  createdAt           DateTime             @default(now()) @map("created_at")
+  updatedAt           DateTime             @updatedAt @map("updated_at")
   appointmentServices AppointmentService[]
   barber              BarberProfile?       @relation(fields: [barberId], references: [id])
 

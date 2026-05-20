@@ -9,6 +9,7 @@ export declare class ServiceService {
         barberId: string | null;
         description: string | null;
         price: import("@prisma/client/runtime/library").Decimal;
+        imageUrl: string | null;
         durationMinutes: number;
     }[]>;
     findAllAdmin(): Promise<{
@@ -20,6 +21,7 @@ export declare class ServiceService {
         barberId: string | null;
         description: string | null;
         price: import("@prisma/client/runtime/library").Decimal;
+        imageUrl: string | null;
         durationMinutes: number;
     }[]>;
     findById(id: string): Promise<{
@@ -31,6 +33,7 @@ export declare class ServiceService {
         barberId: string | null;
         description: string | null;
         price: import("@prisma/client/runtime/library").Decimal;
+        imageUrl: string | null;
         durationMinutes: number;
     }>;
     create(data: CreateServiceInput, barberId?: string): Promise<{
@@ -42,6 +45,7 @@ export declare class ServiceService {
         barberId: string | null;
         description: string | null;
         price: import("@prisma/client/runtime/library").Decimal;
+        imageUrl: string | null;
         durationMinutes: number;
     }>;
     update(id: string, data: UpdateServiceInput, barberId?: string): Promise<{
@@ -53,6 +57,7 @@ export declare class ServiceService {
         barberId: string | null;
         description: string | null;
         price: import("@prisma/client/runtime/library").Decimal;
+        imageUrl: string | null;
         durationMinutes: number;
     }>;
     hardDelete(id: string, barberId?: string): Promise<{
@@ -64,6 +69,7 @@ export declare class ServiceService {
         barberId: string | null;
         description: string | null;
         price: import("@prisma/client/runtime/library").Decimal;
+        imageUrl: string | null;
         durationMinutes: number;
     }>;
     delete(id: string, barberId?: string): Promise<{
@@ -75,6 +81,7 @@ export declare class ServiceService {
         barberId: string | null;
         description: string | null;
         price: import("@prisma/client/runtime/library").Decimal;
+        imageUrl: string | null;
         durationMinutes: number;
     }>;
     reactivate(id: string, barberId?: string): Promise<{
@@ -86,6 +93,7 @@ export declare class ServiceService {
         barberId: string | null;
         description: string | null;
         price: import("@prisma/client/runtime/library").Decimal;
+        imageUrl: string | null;
         durationMinutes: number;
     }>;
 }

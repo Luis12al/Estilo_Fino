@@ -389,3 +389,71 @@ JSONB solo donde aporta flexibilidad real
 | 5 | **Productos** (CRUD + Tienda)               | ⬜ Pendiente |
 | 6 | **Notificaciones** (Recordatorios)          | ⬜ Pendiente |
 | 7 | **Deploy/Testing**                          | ⬜ Pendiente |
+
+
+
+Actúa como un Arquitecto de Software Senior + Desarrollador Full Stack experto en sistemas de reservas.
+
+Tu objetivo es ayudarme a desarrollar paso a paso un sistema completo de gestión de cupos para una barbería, con enfoque en escalabilidad, buenas prácticas y código limpio.
+
+No esta demás decir que ya tengo avances en el proyecto, puedes verlo en el archivo TXT adjuntado, además de ciertos requerimientos, estilos, etc.
+
+Antes de continuar con el desarrollo de este proyecto:
+
+1. Estoy intentando subir el proyecto a Render pero el backend me esta dando problemas. ayudame a solucionar estos problemas para poder subir el proyecto a produccion.
+
+Estos son los errores que aparecen cuando ejecuto "npm run buil":
+(Te adjunto el archivo/s que dan el error al final del texto)
+
+PS D:\Datos\Desktop\Proyectos\Estilo_Fino\backend> npm run build      
+                
+> barbershop-api@1.0.0 build
+> tsc
+
+src/modules/services/service.service.ts:43:9 - error TS2353: Object literal may only specify known properties, and 'imageUrl' does not exist in type 'Without<ServiceCreateInput, ServiceUncheckedCreateInput> & ServiceUncheckedCreateInput'.
+
+43         imageUrl: data.imageUrl,
+           ~~~~~~~~
+
+  node_modules/.prisma/client/index.d.ts:9819:5
+    9819     data: XOR<ServiceCreateInput, ServiceUncheckedCreateInput>
+             ~~~~
+    The expected type comes from property 'data' which is declared here on type '{ select?: ServiceSelect<DefaultArgs> | null | undefined; omit?: ServiceOmit<DefaultArgs> | null | undefined; include?: ServiceInclude<...> | ... 1 more ... | undefined; data: (Without<...> & ServiceUncheckedCreateInput) | (Without<...> & ServiceCreateInput); }'
+
+
+Found 1 error in src/modules/services/service.service.ts:43
+
+2. Continuar con el desarrollo del proyecto
+
+---------------------------------------------------------------------------------------
+Orden de desarrollo de los módulos
+1. Módulo de Servicios - CRUD completo para el admin. (Completado)
+
+2. Módulo de Citas (Admin) - Gestión completa: 
+* Iniciar, finalizar, cancelar, extender citas desde el dashboard. (Completado)
+* Agregar función para que el barbero pueda agendar citas mediante un formulario con toda la información correspondiente para agendar una cita, nombre del cliente, servicios que quiere el cliente, día fecha y hora (y toda la información necesaria para realizar el registro de la cita, sin necesidad de que el cliente este registrado). (Completado pero tiene novedades)
+
+3. Revisión general del proyecto para identificar gaps y actualizar documentación del proyecto antes de continuar.
+
+4. Módulo de Ofertas - CRUD + visualización cliente y admin.
+
+5. Módulo de Productos - CRUD + Tienda interna + visualización cliente y admin.
+
+6. Notificaciones - Recordatorios de citas, cambios de estado.
+
+7. Deploy/Testing - Pruebas end-to-end del flujo completo.
+
+
+⚠️ REGLAS IMPORTANTES:
+
+* No me des respuestas generales
+* No avances al siguiente paso sin que yo lo apruebe
+* Divide todo en fases claras (backend, frontend, base de datos, etc.)
+* Explica antes de codificar
+* Luego dame el código listo para producción
+* Usa buenas prácticas reales (no ejemplos básicos)
+* Todo debe ser modular y escalable
+* Pedirme los archivos que modificaremos antes de que empieces a crear código (amenos de que ya te lo haya mostrado)
+
+
+
