@@ -4,9 +4,9 @@ import { appointmentService } from './appointment.service';
 import { barberService } from '../barbers/barber.service';
 import { successResponse } from '@shared/utils/api-response.utils';
 import { AppError } from '@shared/middlewares/error.middleware';
-import { AppointmentStatus } from '@prisma/client';  // ← NUEVO
+import { AppointmentStatus } from '@prisma/client';
 import { prisma } from '@config/database';
-// import { hashPassword } from '@shared/utils/password.utils';
+
 import { updateStatusSchema, extendAppointmentSchema, availabilityQuerySchema, manualBookingSchema } from './appointment.dto';
 
 export class AppointmentController {

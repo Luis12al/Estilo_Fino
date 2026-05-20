@@ -1,5 +1,5 @@
 import { UserRole, User } from '@prisma/client';
-import { prisma } from '@config/database';
+
 
 export interface AuthTokens {
   accessToken: string;

@@ -7,17 +7,16 @@
     "node": "22.x"
   },
   "scripts": {
-    "dev": "tsx watch src/server.ts",
-    "build": "tsc",
+    "build": "node node_modules/prisma/build/index.js generate && tsc",
     "start": "node dist/server.js",
+    "dev": "tsx watch src/server.ts",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
     "db:seed": "tsx prisma/seed.ts",
     "db:studio": "prisma studio",
     "lint": "eslint src --ext .ts",
-    "test": "vitest",
-    "postinstall": "prisma generate"
+    "test": "vitest"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
