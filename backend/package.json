@@ -7,7 +7,7 @@
     "node": "22.x"
   },
   "scripts": {
-    "build": "node node_modules/prisma/build/index.js generate && tsc && tsc-alias",
+    "build": "node node_modules/prisma/build/index.js generate && tsc && node node_modules/tsc-alias/dist/index.js",
     "start": "node dist/server.js",
     "dev": "tsx watch src/server.ts",
     "db:generate": "prisma generate",
