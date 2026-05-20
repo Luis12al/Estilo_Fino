@@ -21,8 +21,7 @@
       "@modules/*": ["src/modules/*"],
       "@shared/*": ["src/shared/*"]
     },
-    "types": ["node"],
-    "ignoreDeprecations": "6.0"
+    // "ignoreDeprecations": "6.0"
   },
   "include": ["src/**/*", "prisma/**/*"],
   "exclude": ["node_modules", "dist"]
