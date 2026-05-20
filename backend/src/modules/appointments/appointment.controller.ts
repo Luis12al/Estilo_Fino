@@ -6,7 +6,7 @@ import { successResponse } from '@shared/utils/api-response.utils';
 import { AppError } from '@shared/middlewares/error.middleware';
 import { AppointmentStatus } from '@prisma/client';  // ← NUEVO
 import { prisma } from '@config/database';
-import { hashPassword } from '@shared/utils/password.utils';
+// import { hashPassword } from '@shared/utils/password.utils';
 import { updateStatusSchema, extendAppointmentSchema, availabilityQuerySchema, manualBookingSchema } from './appointment.dto';
 
 export class AppointmentController {
