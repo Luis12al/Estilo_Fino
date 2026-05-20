@@ -45,4 +45,3 @@ const errorHandler = (err, _req, res, _next) => {
     res.status(500).json((0, api_response_utils_1.errorResponse)('Internal server error'));
 };
 exports.errorHandler = errorHandler;
-//# sourceMappingURL=error.middleware.js.map

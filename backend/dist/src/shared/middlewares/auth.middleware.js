@@ -19,4 +19,3 @@ const authenticate = (req, _res, next) => {
     }
 };
 exports.authenticate = authenticate;
-//# sourceMappingURL=auth.middleware.js.map

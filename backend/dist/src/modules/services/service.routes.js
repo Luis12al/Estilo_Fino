@@ -20,4 +20,3 @@ router.delete('/:id', auth_middleware_1.authenticate, (0, role_middleware_1.rest
 router.patch('/:id/reactivate', auth_middleware_1.authenticate, (0, role_middleware_1.restrictTo)('BARBER', 'SUPER_ADMIN'), service_controller_1.serviceController.reactivate);
 router.delete('/:id/permanent', auth_middleware_1.authenticate, (0, role_middleware_1.restrictTo)('SUPER_ADMIN'), service_controller_1.serviceController.hardDelete);
 exports.default = router;
-//# sourceMappingURL=service.routes.js.map

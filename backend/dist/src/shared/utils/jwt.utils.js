@@ -26,4 +26,3 @@ const verifyRefreshToken = (token) => {
     return jsonwebtoken_1.default.verify(token, env_1.env.JWT_REFRESH_SECRET);
 };
 exports.verifyRefreshToken = verifyRefreshToken;
-//# sourceMappingURL=jwt.utils.js.map

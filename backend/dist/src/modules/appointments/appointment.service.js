@@ -541,4 +541,3 @@ class AppointmentService {
 }
 exports.AppointmentService = AppointmentService;
 exports.appointmentService = new AppointmentService();
-//# sourceMappingURL=appointment.service.js.map

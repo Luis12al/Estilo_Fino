@@ -16,4 +16,3 @@ const restrictTo = (...roles) => {
     };
 };
 exports.restrictTo = restrictTo;
-//# sourceMappingURL=role.middleware.js.map

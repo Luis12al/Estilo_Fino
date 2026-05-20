@@ -9,7 +9,7 @@ const envSchema = zod_1.z.object({
     JWT_REFRESH_SECRET: zod_1.z.string().min(32),
     JWT_ACCESS_EXPIRATION: zod_1.z.string().default('15m'),
     JWT_REFRESH_EXPIRATION: zod_1.z.string().default('7d'),
-    PORT: zod_1.z.string().default('4000').transform(Number),
+    PORT: zod_1.z.coerce.number().default(4000),
     NODE_ENV: zod_1.z.enum(['development', 'production', 'test']).default('development'),
     CLIENT_URL: zod_1.z.string().url().default('http://localhost:5173'),
 });
@@ -20,4 +20,3 @@ if (!parsed.success) {
 }
 console.log('DATABASE_URL:', process.env.DATABASE_URL);
 exports.env = parsed.data;
-//# sourceMappingURL=env.js.map

@@ -269,4 +269,3 @@ class BarberService {
 }
 exports.BarberService = BarberService;
 exports.barberService = new BarberService();
-//# sourceMappingURL=barber.service.js.map

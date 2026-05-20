@@ -71,4 +71,3 @@ app.use((_req, res) => {
 // Error handler (siempre último)
 app.use(error_middleware_1.errorHandler);
 exports.default = app;
-//# sourceMappingURL=app.js.map

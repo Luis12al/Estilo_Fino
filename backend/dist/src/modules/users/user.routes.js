@@ -18,4 +18,3 @@ router.get('/clients-only', (0, role_middleware_1.restrictTo)('CLIENT'), (_req, 
 router.get('/me', auth_middleware_1.authenticate, user_controller_1.userController.getMe);
 router.put('/me', auth_middleware_1.authenticate, user_controller_1.userController.updateMe);
 exports.default = router;
-//# sourceMappingURL=user.routes.js.map

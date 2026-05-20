@@ -185,4 +185,3 @@ class BarberController {
 }
 exports.BarberController = BarberController;
 exports.barberController = new BarberController();
-//# sourceMappingURL=barber.controller.js.map

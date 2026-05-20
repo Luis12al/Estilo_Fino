@@ -31,4 +31,3 @@ exports.createServiceSchema = zod_1.z.object({
 exports.updateServiceSchema = exports.createServiceSchema.partial().extend({
     isActive: zod_1.z.boolean().optional(),
 });
-//# sourceMappingURL=service.dto.js.map

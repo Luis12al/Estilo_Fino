@@ -34,4 +34,3 @@ exports.createDayOffSchema = zod_1.z.object({
     date: zod_1.z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Formato: YYYY-MM-DD'),
     reason: zod_1.z.string().max(255).optional(),
 });
-//# sourceMappingURL=barber.dto.js.map

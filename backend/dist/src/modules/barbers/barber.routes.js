@@ -21,4 +21,3 @@ router.delete('/me/days-off/:dayOffId', auth_middleware_1.authenticate, (0, role
 router.put('/me/profile', auth_middleware_1.authenticate, (0, role_middleware_1.restrictTo)('BARBER'), barber_controller_1.barberController.updateMyProfile);
 router.get('/me/stats', auth_middleware_1.authenticate, (0, role_middleware_1.restrictTo)('BARBER'), barber_controller_1.barberController.getMyStats);
 exports.default = router;
-//# sourceMappingURL=barber.routes.js.map

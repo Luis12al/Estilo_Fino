@@ -48,4 +48,3 @@ exports.manualBookingSchema = zod_1.z.object({
     serviceIds: zod_1.z.array(zod_1.z.string().uuid('ID de servicio inválido')).min(1, 'Selecciona al menos un servicio'),
     notes: zod_1.z.string().max(500, 'Máximo 500 caracteres').optional(),
 });
-//# sourceMappingURL=appointment.dto.js.map

@@ -117,4 +117,3 @@ class ServiceService {
 }
 exports.ServiceService = ServiceService;
 exports.serviceService = new ServiceService();
-//# sourceMappingURL=service.service.js.map

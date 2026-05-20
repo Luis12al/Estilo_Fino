@@ -14,4 +14,3 @@ router.post('/refresh', (0, validate_middleware_1.validateBody)(auth_dto_1.refre
 router.post('/logout', auth_middleware_1.authenticate, auth_controller_1.authController.logout);
 router.get('/me', auth_middleware_1.authenticate, auth_controller_1.authController.getMe);
 exports.default = router;
-//# sourceMappingURL=auth.routes.js.map

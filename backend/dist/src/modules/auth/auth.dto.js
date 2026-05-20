@@ -17,4 +17,3 @@ exports.loginSchema = zod_1.z.object({
 exports.refreshSchema = zod_1.z.object({
     refreshToken: zod_1.z.string().min(1, 'Refresh token is required'),
 });
-//# sourceMappingURL=auth.dto.js.map

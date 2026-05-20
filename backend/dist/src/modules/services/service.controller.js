@@ -134,4 +134,3 @@ class ServiceController {
 }
 exports.ServiceController = ServiceController;
 exports.serviceController = new ServiceController();
-//# sourceMappingURL=service.controller.js.map

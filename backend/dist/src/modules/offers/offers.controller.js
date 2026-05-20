@@ -15,4 +15,3 @@ class OfferController {
 }
 exports.OfferController = OfferController;
 exports.offerController = new OfferController();
-//# sourceMappingURL=offers.controller.js.map

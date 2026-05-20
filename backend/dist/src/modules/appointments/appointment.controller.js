@@ -272,4 +272,3 @@ class AppointmentController {
 }
 exports.AppointmentController = AppointmentController;
 exports.appointmentController = new AppointmentController();
-//# sourceMappingURL=appointment.controller.js.map

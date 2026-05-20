@@ -13,4 +13,3 @@ const errorResponse = (error, message) => ({
     message,
 });
 exports.errorResponse = errorResponse;
-//# sourceMappingURL=api-response.utils.js.map

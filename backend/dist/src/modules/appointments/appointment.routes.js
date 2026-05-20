@@ -33,4 +33,3 @@ appointment_controller_1.appointmentController.createForClient);
 // ============================================
 router.post('/barber/manual', auth_middleware_1.authenticate, (0, role_middleware_1.restrictTo)('BARBER', 'SUPER_ADMIN'), (0, validate_middleware_1.validateBody)(appointment_dto_1.manualBookingSchema), appointment_controller_1.appointmentController.createManual);
 exports.default = router;
-//# sourceMappingURL=appointment.routes.js.map

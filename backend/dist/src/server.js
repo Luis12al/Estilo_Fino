@@ -10,4 +10,3 @@ app_1.default.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
     console.log(`📊 Environment: ${env_1.env.NODE_ENV}`);
 });
-//# sourceMappingURL=server.js.map
