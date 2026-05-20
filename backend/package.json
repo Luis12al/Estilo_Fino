@@ -7,7 +7,7 @@
     "node": "22.x"
   },
   "scripts": {
-    "build": "node node_modules/prisma/build/index.js generate && tsc",
+    "build": "node node_modules/prisma/build/index.js generate && tsc && tsc-alias",
     "start": "node dist/server.js",
     "dev": "tsx watch src/server.ts",
     "db:generate": "prisma generate",
@@ -37,6 +37,7 @@
     "helmet": "^8.0.0",
     "jsonwebtoken": "^9.0.2",
     "prisma": "^6.0.0",
+    "tsc-alias": "^1.8.17",
     "zod": "^3.23.0"
   },
   "devDependencies": {
