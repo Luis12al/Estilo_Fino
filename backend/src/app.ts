@@ -15,9 +15,8 @@ const app = express();
 // ← FIX: Orígenes permitidos (local + producción)
 const allowedOrigins = [
   env.CLIENT_URL,                          // Desde .env (localhost o producción)
-  'http://localhost:5173',                 // Vite dev server
-  'http://localhost:3000',                 // Alternativo local
-  'https://estilo-fino-web.onrender.com',  // Producción Render (fallback)
+  'http://localhost:5173',
+  'http://localhost:3000', // Producción Render (fallback)
 ];
 
 app.use(helmet());
