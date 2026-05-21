@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.errorHandler = exports.AppError = void 0;
-const api_response_utils_1 = require("@shared/utils/api-response.utils");
+const api_response_utils_1 = require("../utils/api-response.utils");
 const zod_1 = require("zod");
 class AppError extends Error {
     statusCode;

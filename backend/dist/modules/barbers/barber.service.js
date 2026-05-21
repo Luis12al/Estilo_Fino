@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.barberService = exports.BarberService = void 0;
 // backend/src/modules/barbers/barber.service.ts
-const database_1 = require("@config/database");
-const error_middleware_1 = require("@shared/middlewares/error.middleware");
+const database_1 = require("../../config/database");
+const error_middleware_1 = require("../../shared/middlewares/error.middleware");
 class BarberService {
     // ── Listar todos los barberos activos ──
     async findAll() {

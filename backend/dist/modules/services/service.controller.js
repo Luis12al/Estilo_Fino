@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.serviceController = exports.ServiceController = void 0;
-const database_1 = require("@config/database");
+const database_1 = require("../../config/database");
 const service_service_1 = require("./service.service");
-const api_response_utils_1 = require("@shared/utils/api-response.utils");
-const error_middleware_1 = require("@shared/middlewares/error.middleware");
+const api_response_utils_1 = require("../../shared/utils/api-response.utils");
+const error_middleware_1 = require("../../shared/middlewares/error.middleware");
 const service_dto_1 = require("./service.dto");
 class ServiceController {
     // GET /api/services - Público (solo activos)

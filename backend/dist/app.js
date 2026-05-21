@@ -6,14 +6,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const helmet_1 = __importDefault(require("helmet"));
-const env_1 = require("@config/env");
-const error_middleware_1 = require("@shared/middlewares/error.middleware");
-const auth_routes_1 = __importDefault(require("@modules/auth/auth.routes"));
-const user_routes_1 = __importDefault(require("@modules/users/user.routes"));
-const service_routes_1 = __importDefault(require("@modules/services/service.routes"));
-const barber_routes_1 = __importDefault(require("@modules/barbers/barber.routes"));
-const appointment_routes_1 = __importDefault(require("@modules/appointments/appointment.routes"));
-const offers_routes_1 = __importDefault(require("@modules/offers/offers.routes"));
+const env_1 = require("./config/env");
+const error_middleware_1 = require("./shared/middlewares/error.middleware");
+const auth_routes_1 = __importDefault(require("./modules/auth/auth.routes"));
+const user_routes_1 = __importDefault(require("./modules/users/user.routes"));
+const service_routes_1 = __importDefault(require("./modules/services/service.routes"));
+const barber_routes_1 = __importDefault(require("./modules/barbers/barber.routes"));
+const appointment_routes_1 = __importDefault(require("./modules/appointments/appointment.routes"));
+const offers_routes_1 = __importDefault(require("./modules/offers/offers.routes"));
 const app = (0, express_1.default)();
 // ← FIX: Orígenes permitidos (local + producción)
 const allowedOrigins = [

@@ -2,9 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.barberController = exports.BarberController = void 0;
 const barber_service_1 = require("./barber.service");
-const api_response_utils_1 = require("@shared/utils/api-response.utils");
-const error_middleware_1 = require("@shared/middlewares/error.middleware");
-const database_1 = require("@config/database");
+const api_response_utils_1 = require("../../shared/utils/api-response.utils");
+const error_middleware_1 = require("../../shared/middlewares/error.middleware");
+const database_1 = require("../../config/database");
 class BarberController {
     // ── Público ──
     async getAll(_req, res, next) {

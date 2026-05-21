@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.appointmentService = exports.AppointmentService = void 0;
 // backend/src/modules/appointments/appointment.service.ts
-const database_1 = require("@config/database");
-const error_middleware_1 = require("@shared/middlewares/error.middleware");
+const database_1 = require("../../config/database");
+const error_middleware_1 = require("../../shared/middlewares/error.middleware");
 const SLOT_INTERVAL = 30;
 const VALID_TRANSITIONS = {
     PENDING: ['CONFIRMED', 'CANCELLED'],

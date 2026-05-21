@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.serviceService = exports.ServiceService = void 0;
 // backend/src/modules/services/service.service.ts
-const database_1 = require("@config/database");
-const error_middleware_1 = require("@shared/middlewares/error.middleware");
+const database_1 = require("../../config/database");
+const error_middleware_1 = require("../../shared/middlewares/error.middleware");
 class ServiceService {
     // Público: solo activos
     async findAll() {

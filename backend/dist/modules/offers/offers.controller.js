@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.offerController = exports.OfferController = void 0;
-const api_response_utils_1 = require("@shared/utils/api-response.utils");
+const api_response_utils_1 = require("../../shared/utils/api-response.utils");
 class OfferController {
     async getAll(_req, res, next) {
         try {

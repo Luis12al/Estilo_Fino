@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const auth_middleware_1 = require("@shared/middlewares/auth.middleware");
-const role_middleware_1 = require("@shared/middlewares/role.middleware");
+const auth_middleware_1 = require("../../shared/middlewares/auth.middleware");
+const role_middleware_1 = require("../../shared/middlewares/role.middleware");
 const user_controller_1 = require("./user.controller");
 const router = (0, express_1.Router)();
 // Todas las rutas requieren autenticación

@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.userController = exports.UserController = void 0;
-const database_1 = require("@config/database");
-const error_middleware_1 = require("@shared/middlewares/error.middleware");
-const api_response_utils_1 = require("@shared/utils/api-response.utils");
-const password_utils_1 = require("@shared/utils/password.utils");
+const database_1 = require("../../config/database");
+const error_middleware_1 = require("../../shared/middlewares/error.middleware");
+const api_response_utils_1 = require("../../shared/utils/api-response.utils");
+const password_utils_1 = require("../../shared/utils/password.utils");
 class UserController {
     async getMe(req, res, next) {
         try {

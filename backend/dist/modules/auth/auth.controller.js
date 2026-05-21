@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authController = exports.AuthController = void 0;
 const auth_service_1 = require("./auth.service");
-const api_response_utils_1 = require("@shared/utils/api-response.utils");
-const error_middleware_1 = require("@shared/middlewares/error.middleware");
+const api_response_utils_1 = require("../../shared/utils/api-response.utils");
+const error_middleware_1 = require("../../shared/middlewares/error.middleware");
 class AuthController {
     async register(req, res, next) {
         try {

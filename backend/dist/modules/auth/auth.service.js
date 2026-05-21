@@ -4,10 +4,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authService = exports.AuthService = void 0;
-const database_1 = require("@config/database");
-const password_utils_1 = require("@shared/utils/password.utils");
-const jwt_utils_1 = require("@shared/utils/jwt.utils");
-const error_middleware_1 = require("@shared/middlewares/error.middleware");
+const database_1 = require("../../config/database");
+const password_utils_1 = require("../../shared/utils/password.utils");
+const jwt_utils_1 = require("../../shared/utils/jwt.utils");
+const error_middleware_1 = require("../../shared/middlewares/error.middleware");
 const crypto_1 = __importDefault(require("crypto"));
 class AuthService {
     /**

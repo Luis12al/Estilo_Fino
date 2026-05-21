@@ -3,9 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.appointmentController = exports.AppointmentController = void 0;
 const appointment_service_1 = require("./appointment.service");
 const barber_service_1 = require("../barbers/barber.service");
-const api_response_utils_1 = require("@shared/utils/api-response.utils");
-const error_middleware_1 = require("@shared/middlewares/error.middleware");
-const database_1 = require("@config/database");
+const api_response_utils_1 = require("../../shared/utils/api-response.utils");
+const error_middleware_1 = require("../../shared/middlewares/error.middleware");
+const database_1 = require("../../config/database");
 const appointment_dto_1 = require("./appointment.dto");
 class AppointmentController {
     /**

@@ -3,9 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // backend/src/modules/appointments/appointment.routes.ts
 const express_1 = require("express");
 const appointment_controller_1 = require("./appointment.controller");
-const validate_middleware_1 = require("@shared/middlewares/validate.middleware");
-const auth_middleware_1 = require("@shared/middlewares/auth.middleware");
-const role_middleware_1 = require("@shared/middlewares/role.middleware");
+const validate_middleware_1 = require("../../shared/middlewares/validate.middleware");
+const auth_middleware_1 = require("../../shared/middlewares/auth.middleware");
+const role_middleware_1 = require("../../shared/middlewares/role.middleware");
 const appointment_dto_1 = require("./appointment.dto");
 const router = (0, express_1.Router)();
 // Público - Ver disponibilidad

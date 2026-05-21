@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.validateBody = void 0;
 const zod_1 = require("zod");
-const api_response_utils_1 = require("@shared/utils/api-response.utils");
+const api_response_utils_1 = require("../utils/api-response.utils");
 const validateBody = (schema) => {
     return (req, res, next) => {
         try {

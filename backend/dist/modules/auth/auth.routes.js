@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const auth_controller_1 = require("./auth.controller");
-const validate_middleware_1 = require("@shared/middlewares/validate.middleware");
-const auth_middleware_1 = require("@shared/middlewares/auth.middleware");
+const validate_middleware_1 = require("../../shared/middlewares/validate.middleware");
+const auth_middleware_1 = require("../../shared/middlewares/auth.middleware");
 const auth_dto_1 = require("./auth.dto");
 const router = (0, express_1.Router)();
 // Públicos
