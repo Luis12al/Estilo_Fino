@@ -16,7 +16,8 @@ const app = express();
 const allowedOrigins = [
   env.CLIENT_URL,                          // Desde .env (localhost o producción)
   'http://localhost:5173',
-  'http://localhost:3000', // Producción Render (fallback)
+  'http://localhost:3000',
+  'https://estilo-fino-web-new.onrender.com',// Producción Render (fallback)
 ];
 
 app.use(helmet());
