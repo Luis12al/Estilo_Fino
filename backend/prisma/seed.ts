@@ -23,73 +23,100 @@ async function main() {
   }
   console.log('✅ Servicios base creados');
 
-  // ========== BARBERO DE PRUEBA ==========
-  const hashedPassword = await bcrypt.hash('admin123', 12);
-  
-  const adminUser = await prisma.user.upsert({
-    where: { email: 'barbero@barbershop.com' },
-    update: {},
-    create: {
-      id: '11111111-1111-1111-1111-111111111111',
-      email: 'barbero@barbershop.com',
-      passwordHash: hashedPassword,
-      firstName: 'Juan',
-      lastName: 'Pérez',
+  // ========== CONFIGURACIÓN DE BARBEROS ==========
+  const barbers = [
+    {
+      userId: '11111111-1111-1111-1111-111111111111',
+      email: 'leo@barbershop.com',
+      password: 'admin123',
+      firstName: 'Leo',
+      lastName: 'Jaramillo',
       phone: '+573001234567',
-      role: 'BARBER',
-    },
-  });
-
-  // Crear perfil de barbero y capturar su ID
-  const barberProfile = await prisma.barberProfile.upsert({
-    where: { userId: adminUser.id },
-    update: {},
-    create: {
-      userId: adminUser.id,
       bio: 'Barbero profesional con 10 años de experiencia. Especialista en fades y diseños.',
-      defaultSlotDuration: 60,
+      avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
     },
-  });
+    {
+      userId: '22222222-2222-2222-2222-222222222222',
+      email: 'dogy@barbershop.com',
+      password: 'admin123',
+      firstName: 'Carlos',
+      lastName: 'Herrera',
+      phone: '+573002345678',
+      bio: 'Especialista en barbas y cortes clásicos. Experto en pigmentación.',
+      avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop',
+    },
+  ];
 
-  // ===== CORRECCIÓN CLAVE: usar barberProfile.id, NO adminUser.id =====
-  const barberId = barberProfile.id;
+  for (const barberData of barbers) {
+    const hashedPassword = await bcrypt.hash(barberData.password, 12);
 
-  // Horario del barbero (Lunes a Sábado, 9am - 9pm)
-  const days = [1, 2, 3, 4, 5, 6];
-  for (const day of days) {
-    await prisma.workSchedule.upsert({
-      where: { 
-        barberId_dayOfWeek: { 
-          barberId: barberId,  // ← CORREGIDO
-          dayOfWeek: day 
-        } 
-      },
+    const user = await prisma.user.upsert({
+      where: { email: barberData.email },
       update: {},
       create: {
-        barberId: barberId,  // ← CORREGIDO
-        dayOfWeek: day,
-        startTime: '09:00',
-        endTime: '21:00',
-        isActive: true,
+        id: barberData.userId,
+        email: barberData.email,
+        passwordHash: hashedPassword,
+        firstName: barberData.firstName,
+        lastName: barberData.lastName,
+        phone: barberData.phone,
+        role: 'BARBER',
       },
     });
-  }
 
-  // Descanso almuerzo (13:00 - 14:00 todos los días)
-  for (const day of [0, 1, 2, 3, 4, 5, 6]) {
-    await prisma.break.createMany({
-      skipDuplicates: true,
-      data: {
-        barberId: barberId,  // ← CORREGIDO
-        dayOfWeek: day,
-        startTime: '13:00',
-        endTime: '14:00',
-        isRecurring: true,
+    const barberProfile = await prisma.barberProfile.upsert({
+      where: { userId: user.id },
+      update: {},
+      create: {
+        userId: user.id,
+        bio: barberData.bio,
+        avatarUrl: barberData.avatarUrl,
+        defaultSlotDuration: 60,
       },
     });
-  }
 
-  console.log('✅ Barbero de prueba creado: barbero@barbershop.com / admin123');
+    const barberId = barberProfile.id;
+
+    // Horario del barbero (Lunes a Sábado, 9am - 9pm)
+    const days = [1, 2, 3, 4, 5, 6];
+    for (const day of days) {
+      await prisma.workSchedule.upsert({
+        where: {
+          barberId_dayOfWeek: {
+            barberId: barberId,
+            dayOfWeek: day,
+          },
+        },
+        update: {},
+        create: {
+          barberId: barberId,
+          dayOfWeek: day,
+          startTime: '09:00',
+          endTime: '21:00',
+          isActive: true,
+        },
+      });
+    }
+
+    // Descanso almuerzo (12:00 - 14:00 todos los días)
+    for (const day of [0, 1, 2, 3, 4, 5, 6]) {
+      await prisma.break.upsert({
+        where: {
+          id: `${barberId}-break-${day}`,
+        },
+        update: {},
+        create: {
+          barberId: barberId,
+          dayOfWeek: day,
+          startTime: '12:00',
+          endTime: '14:00',
+          isRecurring: true,
+        },
+      });
+    }
+
+    console.log(`✅ Barbero creado: ${barberData.email} / ${barberData.password}`);
+  }
 
   // ========== CLIENTE DE PRUEBA ==========
   const clientPassword = await bcrypt.hash('cliente123', 12);
@@ -97,10 +124,10 @@ async function main() {
     where: { email: 'cliente@email.com' },
     update: {},
     create: {
-      id: '22222222-2222-2222-2222-222222222222',
+      id: '33333333-3333-3333-3333-333333333333',
       email: 'cliente@email.com',
       passwordHash: clientPassword,
-      firstName: 'Carlos',
+      firstName: 'Andrés',
       lastName: 'Gómez',
       phone: '+573009876543',
       role: 'CLIENT',

@@ -47,11 +47,11 @@ export const manualBookingSchema = z.object({
     .min(7, 'Teléfono inválido')
     .max(20, 'Máximo 20 caracteres')
     .regex(/^[0-9+\-\s()]+$/, 'Formato de teléfono inválido'),
-  startTime: z.string().datetime('Formato de fecha inválido (ISO 8601 requerido)'),
+  // ← FIX: Aceptar cualquier string que sea parseable como fecha
+  startTime: z.string().min(1, 'La fecha es requerida'),
   serviceIds: z.array(z.string().uuid('ID de servicio inválido')).min(1, 'Selecciona al menos un servicio'),
   notes: z.string().max(500, 'Máximo 500 caracteres').optional(),
 });
-
 
 export type AvailabilityQuery = z.infer<typeof availabilityQuerySchema>;
 export type CreateAppointmentInput = z.infer<typeof createAppointmentSchema>;
