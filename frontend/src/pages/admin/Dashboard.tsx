@@ -163,11 +163,11 @@ const stats = backendStats.total > 0
         <aside className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 w-64 bg-[#1A1A1A] border-r border-[#2A2A2A] min-h-screen fixed left-0 top-0 z-40 transition-transform duration-300`}>
           <div className="p-6 border-b border-[#2A2A2A]">
             <div className="flex items-center gap-3">
-              <div className="w-14 h-14 rounded-xl bg-[#C9A84C]/10 flex items-center justify-center overflow-hidden">
+              <div className="inline-flex items-center justify-center w-20 h-20 bg-[#C9A84C]/10 rounded-full mb-4 border-2 border-[#C9A84C] ring-2 ring-[#C9A84C]/30">
                 <img 
                   src="../../../logo.jpeg"  // ← Ruta desde public/
                   alt="Estilo Fino" 
-                  className="w-full h-full object-contain p-1"
+                  className="w-full h-full object-cover rounded-full"
                 />
               </div>
               <div>

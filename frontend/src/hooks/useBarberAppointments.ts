@@ -19,24 +19,18 @@ interface TodayStatsData {
 export const useBarberAppointments = (options: UseBarberAppointmentsOptions = {}) => {
   const { date, autoFetch = true } = options;
 
-  // ← FIX: Estados separados para Dashboard vs Lista
-  const [todayAppointments, setTodayAppointments] = useState<Appointment[]>([]);
-  const [allAppointments, setAllAppointments] = useState<Appointment[]>([]);
-  
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [stats, setStats] = useState<TodayStatsData>({
-    total: 0,
-    pending: 0,
-    confirmed: 0,
-    inProgress: 0,
-    completed: 0,
-    cancelled: 0,
+    total: 0, pending: 0, confirmed: 0, inProgress: 0, completed: 0, cancelled: 0,
   });
   const [loading, setLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  
   const [filterStatus, setFilterStatus] = useState('');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const isMounted = useRef(true);
   useEffect(() => {
@@ -44,21 +38,29 @@ export const useBarberAppointments = (options: UseBarberAppointmentsOptions = {}
     return () => { isMounted.current = false; };
   }, []);
 
-  // ── Fetch citas del día (solo para dashboard) ──
-  const fetchTodayAppointments = useCallback(async () => {
-    if (!date || !isMounted.current) return;
+  // ── Fetch citas del día (Dashboard) ──
+  const fetchTodayAppointments = useCallback(async (targetDate?: string) => {
+    const queryDate = targetDate || date;
+    if (!queryDate || !isMounted.current) return;
+    
     setLoading(true);
     setError(null);
 
     try {
-      const response = await appointmentApi.getMyBarberAppointments(date);
-      if (response.success && response.data) {
-        if (isMounted.current) setTodayAppointments(response.data);
-      } else {
-        if (isMounted.current) setError(response.message || 'Error al cargar citas');
+      const response = await appointmentApi.getMyBarberAppointments(queryDate);
+      if (isMounted.current) {
+        if (response.success && response.data) {
+          setAppointments(response.data);
+        } else {
+          setError(response.message || 'Error al cargar citas');
+          setAppointments([]);
+        }
       }
     } catch (err: any) {
-      if (isMounted.current) setError(err.response?.data?.message || 'Error de conexión');
+      if (isMounted.current) {
+        setError(err.response?.data?.message || 'Error de conexión');
+        setAppointments([]);
+      }
     } finally {
       if (isMounted.current) setLoading(false);
     }
@@ -69,27 +71,26 @@ export const useBarberAppointments = (options: UseBarberAppointmentsOptions = {}
     if (!isMounted.current) return;
     try {
       const response = await appointmentApi.getTodayStats();
-      if (response.success && response.data) {
+      if (response.success && response.data && isMounted.current) {
         const data = response.data;
-        const safeStats: TodayStatsData = {
+        setStats({
           total: Number(data.total) || 0,
           pending: Number(data.pending) || 0,
           confirmed: Number(data.confirmed) || 0,
           inProgress: Number(data.inProgress) || 0,
           completed: Number(data.completed) || 0,
           cancelled: Number(data.cancelled) || 0,
-        };
-        if (isMounted.current) setStats(safeStats);
+        });
       }
     } catch (err: any) {
       console.error('Error cargando stats:', err);
-      if (isMounted.current) setStats({
-        total: 0, pending: 0, confirmed: 0, inProgress: 0, completed: 0, cancelled: 0,
-      });
+      if (isMounted.current) {
+        setStats({ total: 0, pending: 0, confirmed: 0, inProgress: 0, completed: 0, cancelled: 0 });
+      }
     }
   }, []);
 
-  // ── Fetch TODAS las citas (para página de citas) ──
+  // ── Fetch TODAS las citas (Lista con filtros) ──
   const fetchAllAppointments = useCallback(async (params?: {
     status?: string;
     from?: string;
@@ -101,56 +102,81 @@ export const useBarberAppointments = (options: UseBarberAppointmentsOptions = {}
     setError(null);
     
     try {
-      console.log('🔄 Llamando fetchAllAppointments con params:', params);
-      const response = await appointmentApi.getAllMyAppointments({
-        status: params?.status || filterStatus || undefined,
-        from: params?.from || dateFrom || undefined,
-        to: params?.to || dateTo || undefined,
-        search: params?.search || undefined,
-      });
+      const cleanParams: Record<string, string> = {};
+      if (params?.status?.trim()) cleanParams.status = params.status.trim();
+      if (params?.from?.trim()) cleanParams.from = params.from.trim();
+      if (params?.to?.trim()) cleanParams.to = params.to.trim();
+      if (params?.search?.trim()) cleanParams.search = params.search.trim();
+
+      console.log('🔄 [Hook] fetchAllAppointments params:', cleanParams);
+
+      const response = await appointmentApi.getAllMyAppointments(
+        Object.keys(cleanParams).length > 0 ? cleanParams : undefined
+      );
       
-      console.log('✅ Respuesta fetchAllAppointments:', response);
+      console.log('✅ [Hook] Respuesta:', response.success, 'data length:', response.data?.length);
       
-      if (response.success && response.data) {
-        if (isMounted.current) setAllAppointments(response.data);
-      } else {
-        if (isMounted.current) setError(response.message || 'Error al cargar citas');
+      if (isMounted.current) {
+        if (response.success && response.data) {
+          setAppointments(response.data);
+        } else {
+          setError(response.message || 'Error al cargar citas');
+          setAppointments([]);
+        }
       }
     } catch (err: any) {
-      console.error('❌ Error fetchAllAppointments:', err);
-      if (isMounted.current) setError(err.response?.data?.message || 'Error al cargar citas');
+      console.error('❌ [Hook] Error:', err);
+      if (isMounted.current) {
+        setError(err.response?.data?.message || 'Error al cargar citas');
+        setAppointments([]);
+      }
     } finally {
       if (isMounted.current) setLoading(false);
     }
-  }, [filterStatus, dateFrom, dateTo]);
+  }, []);
 
-  // ← FIX: useEffect separado para cada modo
+  // Efecto de carga inicial
   useEffect(() => {
     if (!autoFetch) return;
-
     if (date) {
-      // Modo Dashboard
-      fetchTodayAppointments();
+      fetchTodayAppointments(date);
       fetchStats();
     } else {
-      // Modo Lista de Citas
       fetchAllAppointments();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoFetch, date]);
 
-  // ← FIX: Refrescar lista cuando cambian filtros
+  // Efecto para filtros (solo modo lista)
   useEffect(() => {
     if (!autoFetch || date) return;
+    
     const timeout = setTimeout(() => {
-      fetchAllAppointments();
+      fetchAllAppointments({
+        status: filterStatus || undefined,
+        from: dateFrom || undefined,
+        to: dateTo || undefined,
+        search: searchQuery || undefined,
+      });
     }, 300);
+
     return () => clearTimeout(timeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterStatus, dateFrom, dateTo]);
+  }, [filterStatus, dateFrom, dateTo, searchQuery]);
 
-  // ── Retornar appointments según el modo ──
-  const appointments = date ? todayAppointments : allAppointments;
+  const refresh = useCallback(() => {
+    if (date) {
+      fetchTodayAppointments();
+      fetchStats();
+    } else {
+      fetchAllAppointments({
+        status: filterStatus || undefined,
+        from: dateFrom || undefined,
+        to: dateTo || undefined,
+        search: searchQuery || undefined,
+      });
+    }
+  }, [date, filterStatus, dateFrom, dateTo, searchQuery, fetchTodayAppointments, fetchStats, fetchAllAppointments]);
 
   const updateStatus = useCallback(async (
     id: string,
@@ -163,12 +189,7 @@ export const useBarberAppointments = (options: UseBarberAppointmentsOptions = {}
     try {
       const response = await appointmentApi.updateStatus(id, payload);
       if (response.success) {
-        if (date) {
-          await fetchTodayAppointments();
-          await fetchStats();
-        } else {
-          await fetchAllAppointments();
-        }
+        await refresh();
         return response.data;
       }
       throw new Error(response.message);
@@ -179,7 +200,7 @@ export const useBarberAppointments = (options: UseBarberAppointmentsOptions = {}
     } finally {
       if (isMounted.current) setActionLoading(null);
     }
-  }, [date, fetchTodayAppointments, fetchStats, fetchAllAppointments]);
+  }, [refresh]);
 
   const extend = useCallback(async (id: string, additionalMinutes: number = 20) => {
     if (!isMounted.current) return;
@@ -189,11 +210,7 @@ export const useBarberAppointments = (options: UseBarberAppointmentsOptions = {}
     try {
       const response = await appointmentApi.extend(id, additionalMinutes);
       if (response.success) {
-        if (date) {
-          await fetchTodayAppointments();
-        } else {
-          await fetchAllAppointments();
-        }
+        await refresh();
         return response.data;
       }
       throw new Error(response.message);
@@ -204,7 +221,7 @@ export const useBarberAppointments = (options: UseBarberAppointmentsOptions = {}
     } finally {
       if (isMounted.current) setActionLoading(null);
     }
-  }, [date, fetchTodayAppointments, fetchAllAppointments]);
+  }, [refresh]);
 
   const createManual = useCallback(async (data: {
     guestName: string;
@@ -220,12 +237,7 @@ export const useBarberAppointments = (options: UseBarberAppointmentsOptions = {}
     try {
       const response = await appointmentApi.createManual(data);
       if (response.success) {
-        if (date) {
-          await fetchTodayAppointments();
-          await fetchStats();
-        } else {
-          await fetchAllAppointments();
-        }
+        await refresh();
         return response.data;
       }
       throw new Error(response.message);
@@ -236,7 +248,7 @@ export const useBarberAppointments = (options: UseBarberAppointmentsOptions = {}
     } finally {
       if (isMounted.current) setActionLoading(null);
     }
-  }, [date, fetchTodayAppointments, fetchStats, fetchAllAppointments]);
+  }, [refresh]);
 
   return {
     appointments,
@@ -244,7 +256,7 @@ export const useBarberAppointments = (options: UseBarberAppointmentsOptions = {}
     loading,
     actionLoading,
     error,
-    refresh: date ? fetchTodayAppointments : fetchAllAppointments,
+    refresh,
     updateStatus,
     extend,
     filterStatus,
@@ -253,6 +265,8 @@ export const useBarberAppointments = (options: UseBarberAppointmentsOptions = {}
     setDateFrom,
     dateTo,
     setDateTo,
+    searchQuery,
+    setSearchQuery,
     fetchAllAppointments,
     createManual
   };

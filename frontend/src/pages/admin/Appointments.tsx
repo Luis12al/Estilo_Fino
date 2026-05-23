@@ -1,5 +1,5 @@
 // frontend/src/pages/admin/Appointments.tsx
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback } from 'react';
 import { useAuth } from '@hooks/useAuth';
 import { useBarberAppointments } from '@hooks/useBarberAppointments';
 import { useAvailability } from '@hooks/useAvailability';
@@ -87,6 +87,8 @@ export default function AdminAppointments() {
     setDateFrom,
     dateTo,
     setDateTo,
+    searchQuery,      // ← NUEVO: del hook, no local
+    setSearchQuery,   // ← NUEVO: del hook, no local
     fetchAllAppointments,
     createManual,
   } = useBarberAppointments({ autoFetch: true });
@@ -106,9 +108,7 @@ export default function AdminAppointments() {
   const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
   const [barberId, setBarberId] = useState<string>('');
-  const [searchQuery, setSearchQuery] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const handleLogout = async () => {
     await logout();
@@ -205,16 +205,6 @@ export default function AdminAppointments() {
     });
   };
 
-  const handleApplyFilters = useCallback(() => {
-    // ← FIX: Pasar valores actuales explícitamente, no depender del estado del hook
-    fetchAllAppointments({
-      status: filterStatus || undefined,
-      from: dateFrom || undefined,
-      to: dateTo || undefined,
-      search: searchQuery.trim() || undefined,
-    });
-  }, [filterStatus, dateFrom, dateTo, searchQuery, fetchAllAppointments]);
-
   const getStatusConfig = (status: string) => {
     switch (status) {
       case 'PENDING': return { label: 'Pendiente', color: 'text-yellow-400 bg-yellow-400/10', icon: Clock };
@@ -226,27 +216,6 @@ export default function AdminAppointments() {
     }
   };
 
-  useEffect(() => {
-    if (searchQuery.trim().length < 2) return; // Solo buscar si hay 2+ chars
-    
-    if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
-    
-    searchTimeoutRef.current = setTimeout(() => {
-      fetchAllAppointments({
-        status: filterStatus || undefined,
-        from: dateFrom || undefined,
-        to: dateTo || undefined,
-        search: searchQuery.trim(),
-      });
-    }, 500);
-
-    return () => {
-      if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchQuery]);
-
-
   return (
     <div className="min-h-screen bg-[#0F0F0F]">
       <div className="flex">
@@ -254,11 +223,11 @@ export default function AdminAppointments() {
         <aside className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 w-64 bg-[#1A1A1A] border-r border-[#2A2A2A] min-h-screen fixed left-0 top-0 z-40 transition-transform duration-300`}>
           <div className="p-6 border-b border-[#2A2A2A]">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-[#C9A84C]/10 flex items-center justify-center">
+              <div className="inline-flex items-center justify-center w-20 h-20 bg-[#C9A84C]/10 rounded-full mb-4 border-2 border-[#C9A84C] ring-2 ring-[#C9A84C]/30">
                 <img 
                   src="/logo.jpeg"
                   alt="Estilo Fino" 
-                  className="w-full h-full object-contain p-1"
+                  className="w-full h-full object-cover rounded-full"
                 />
               </div>
               <div>
@@ -394,7 +363,12 @@ export default function AdminAppointments() {
                   />
                 </div>
                 <button
-                  onClick={() => handleApplyFilters()}
+                  onClick={() => fetchAllAppointments({
+                    status: filterStatus || undefined,
+                    from: dateFrom || undefined,
+                    to: dateTo || undefined,
+                    search: searchQuery || undefined,
+                  })}
                   className="px-4 py-2 bg-[#252525] hover:bg-[#3A3A3A] text-white text-sm rounded-lg transition-colors border border-[#2A2A2A]"
                 >
                   Aplicar

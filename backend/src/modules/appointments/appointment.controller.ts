@@ -178,86 +178,98 @@ async getTodayStats(req: Request, res: Response, next: NextFunction): Promise<vo
    * GET /api/appointments/barber/all
    * Todas las citas del barbero (sin filtro de fecha)
    */
-   async getAllMyAppointments(req: Request, res: Response, next: NextFunction): Promise<void> {
+    async getAllMyAppointments(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user?.userId;
       if (!userId) throw new AppError(401, 'Authentication required');
 
       const profile = await barberService.findMyProfile(userId);
-      
-      console.log('🔍 getAllMyAppointments - profile.id:', profile.id);
+      console.log('🔍 [getAllMyAppointments] userId:', userId, '| barberId:', profile.id);
 
       const { status, from, to, search } = req.query;
-      
-      // ← FIX: Construir WHERE dinámicamente
-      let whereClause = `WHERE a.barber_id = '${profile.id}'`;
-      
-      if (status) {
-        whereClause += ` AND a.status = '${String(status)}'`;
-      }
-      
-      if (from) {
-        whereClause += ` AND a.start_time >= '${String(from)}T00:00:00'::timestamp`;
-      }
-      
-      if (to) {
-        whereClause += ` AND a.start_time <= '${String(to)}T23:59:59'::timestamp`;
-      }
-      
-      if (search) {
-        const searchStr = String(search).toLowerCase();
-        whereClause += ` AND (
-          LOWER(u.first_name) LIKE '%${searchStr}%' OR
-          LOWER(u.last_name) LIKE '%${searchStr}%' OR
-          LOWER(a.guest_name) LIKE '%${searchStr}%' OR
-          LOWER(a.guest_phone) LIKE '%${searchStr}%'
-        )`;
+
+      // ← FIX: Construir WHERE paso a paso, evitando objetos vacíos
+      const where: any = {
+        barberId: profile.id,
+      };
+
+      // Filtro por estado (solo si se proporciona y no está vacío)
+      const statusStr = status ? String(status).trim() : '';
+      if (statusStr) {
+        where.status = statusStr;
       }
 
-      // ← FIX: Query RAW para evitar problemas de Prisma
-      const rawAppointments = await prisma.$queryRawUnsafe<any[]>(`
-        SELECT 
-          a.id, a.client_id, a.guest_name, a.guest_phone, 
-          a.barber_id, a.start_time, a.end_time, 
-          a.total_price, a.total_duration, a.status::text as status, a.notes,
-          a.created_at, a.updated_at
-        FROM appointments a
-        LEFT JOIN users u ON a.client_id = u.id
-        ${whereClause}
-        ORDER BY a.start_time DESC
-      `);
+      // Filtro por fecha DESDE
+      const fromStr = from ? String(from).trim() : '';
+      if (fromStr) {
+        const fromDate = new Date(fromStr + 'T00:00:00');
+        where.startTime = { ...where.startTime, gte: fromDate };
+      }
 
-      console.log('🔍 Raw query - count:', rawAppointments.length);
+      // Filtro por fecha HASTA
+      const toStr = to ? String(to).trim() : '';
+      if (toStr) {
+        const toDate = new Date(toStr + 'T23:59:59.999');
+        where.startTime = { ...where.startTime, lte: toDate };
+      }
 
-      // ← FIX: Obtener servicios para cada cita
-      const appointmentsWithDetails = await Promise.all(
-        rawAppointments.map(async (apt) => {
-          const [client, services] = await Promise.all([
-            apt.client_id ? prisma.user.findUnique({
-              where: { id: apt.client_id },
-              select: { id: true, firstName: true, lastName: true, phone: true },
-            }) : null,
-            prisma.appointmentService.findMany({
-              where: { appointmentId: apt.id },
-              include: {
-                service: {
-                  select: { id: true, name: true, price: true, durationMinutes: true },
+      // Filtro por búsqueda de texto
+      const searchStr = search ? String(search).trim() : '';
+      if (searchStr) {
+        where.OR = [
+          { client: { firstName: { contains: searchStr, mode: 'insensitive' } } },
+          { client: { lastName: { contains: searchStr, mode: 'insensitive' } } },
+          { guestName: { contains: searchStr, mode: 'insensitive' } },
+          { guestPhone: { contains: searchStr, mode: 'insensitive' } },
+        ];
+      }
+
+      console.log('🔍 [getAllMyAppointments] WHERE:', JSON.stringify(where, null, 2));
+
+      const appointments = await prisma.appointment.findMany({
+        where,
+        include: {
+          services: {
+            include: {
+              service: {
+                select: {
+                  id: true,
+                  name: true,
+                  price: true,
+                  durationMinutes: true,
                 },
               },
-            }),
-          ]);
+            },
+          },
+          client: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              phone: true,
+            },
+          },
+          barber: {
+            include: {
+              user: {
+                select: {
+                  firstName: true,
+                  lastName: true,
+                },
+              },
+            },
+          },
+        },
+        orderBy: {
+          startTime: 'desc',
+        },
+      });
 
-          return {
-            ...apt,
-            client,
-            services,
-          };
-        })
-      );
+      console.log('✅ [getAllMyAppointments] Encontradas:', appointments.length, 'citas');
 
-      res.status(200).json(successResponse(appointmentsWithDetails));
+      res.status(200).json(successResponse(appointments));
     } catch (error) {
-      console.error('❌ Error en getAllMyAppointments:', error);
+      console.error('❌ [getAllMyAppointments] Error:', error);
       next(error);
     }
   }

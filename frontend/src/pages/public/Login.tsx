@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@hooks/useAuth';
-import { Eye, EyeOff, Scissors, ArrowRight } from 'lucide-react';
+import { Eye, EyeOff, ArrowRight } from 'lucide-react';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -38,8 +38,12 @@ export default function Login() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-[#C9A84C]/10 rounded-2xl mb-4 border border-[#C9A84C]/20">
-            <Scissors size={32} className="text-[#C9A84C]" />
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-[#C9A84C]/10 rounded-full mb-4 border-2 border-[#C9A84C] ring-2 ring-[#C9A84C]/30">
+            <img 
+              src="/logo.jpeg"
+              alt="Estilo Fino" 
+              className="w-full h-full object-cover rounded-full"
+            />
           </div>
           <h1 className="text-3xl font-bold text-white">Estilo Fino</h1>
           <p className="text-[#9CA3AF] mt-2">Inicia sesión en tu cuenta</p>
