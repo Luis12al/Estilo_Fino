@@ -363,6 +363,7 @@ export default function AdminAppointments() {
                   />
                 </div>
                 <button
+                  type="button"
                   onClick={() => fetchAllAppointments({
                     status: filterStatus || undefined,
                     from: dateFrom || undefined,

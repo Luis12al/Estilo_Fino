@@ -1,4 +1,3 @@
-// backend/src/modules/appointments/appointment.routes.ts
 import { Router } from 'express';
 import { appointmentController } from './appointment.controller';
 import { validateBody } from '@shared/middlewares/validate.middleware';
@@ -15,7 +14,11 @@ router.get('/availability', appointmentController.getAvailability);
 router.post('/', authenticate, restrictTo('CLIENT'), validateBody(createAppointmentSchema), appointmentController.create);
 router.get('/my', authenticate, restrictTo('CLIENT'), appointmentController.getMyAppointments);
 
-// ← NUEVO: Protegido - Barbero (ver MIS citas)
+// ============================================
+// ← FIX CRÍTICO: Rutas ESTÁTICAS primero, luego DINÁMICAS
+// ============================================
+
+// GET /api/appointments/barber/me — Citas del día del barbero logueado
 router.get(
   '/barber/me',
   authenticate,
@@ -23,15 +26,7 @@ router.get(
   appointmentController.getMyBarberAppointments
 );
 
-// Protegido - Barbero/Admin (ver citas de un barbero específico)
-router.get(
-  '/barber/:id',
-  authenticate,
-  restrictTo('BARBER', 'SUPER_ADMIN'),
-  appointmentController.getBarberAppointments
-);
-
-// GET /api/appointments/barber/stats - Estadísticas del día
+// GET /api/appointments/barber/stats — Estadísticas del día
 router.get(
   '/barber/stats',
   authenticate,
@@ -39,7 +34,45 @@ router.get(
   appointmentController.getTodayStats
 );
 
-// PATCH /api/appointments/:id/status - Iniciar, Finalizar, Cancelar
+// GET /api/appointments/barber/all — TODAS las citas del barbero (CON FILTROS)
+router.get(
+  '/barber/all',
+  authenticate,
+  restrictTo('BARBER', 'SUPER_ADMIN'),
+  appointmentController.getAllMyAppointments
+);
+
+// POST /api/appointments/barber/manual — Agendar walk-in
+router.post(
+  '/barber/manual',
+  authenticate,
+  restrictTo('BARBER', 'SUPER_ADMIN'),
+  validateBody(manualBookingSchema),
+  appointmentController.createManual
+);
+
+// POST /api/appointments/barber/create-for-client — Agendar para cliente registrado
+router.post(
+  '/barber/create-for-client',
+  authenticate,
+  restrictTo('BARBER', 'SUPER_ADMIN'),
+  validateBody(createAppointmentSchema),
+  appointmentController.createForClient
+);
+
+// ============================================
+// ← RUTAS DINÁMICAS AL FINAL (siempre después de las estáticas)
+// ============================================
+
+// GET /api/appointments/barber/:id — Citas de un barbero específico
+router.get(
+  '/barber/:id',
+  authenticate,
+  restrictTo('BARBER', 'SUPER_ADMIN'),
+  appointmentController.getBarberAppointments
+);
+
+// PATCH /api/appointments/:id/status — Cambiar estado
 router.patch(
   '/:id/status',
   authenticate,
@@ -48,41 +81,13 @@ router.patch(
   appointmentController.updateStatus
 );
 
-// POST /api/appointments/:id/extend - Extender +20min
+// POST /api/appointments/:id/extend — Extender cita
 router.post(
   '/:id/extend',
   authenticate,
   restrictTo('BARBER', 'SUPER_ADMIN'),
   validateBody(extendAppointmentSchema),
   appointmentController.extend
-);
-
-// GET /api/appointments/barber/all - Todas las citas del barbero
-router.get(
-  '/barber/all',
-  authenticate,
-  restrictTo('BARBER', 'SUPER_ADMIN'),
-  appointmentController.getAllMyAppointments
-);
-
-// POST /api/appointments/barber/create-for-client - Agendar para cliente
-router.post(
-  '/barber/create-for-client',
-  authenticate,
-  restrictTo('BARBER', 'SUPER_ADMIN'),
-  validateBody(createAppointmentSchema), // Reutilizamos el mismo schema
-  appointmentController.createForClient
-);
-
-// ============================================
-// NUEVO: Barbero agenda cita manual (walk-in)
-// ============================================
-router.post(
-  '/barber/manual',
-  authenticate,
-  restrictTo('BARBER', 'SUPER_ADMIN'),
-  validateBody(manualBookingSchema),
-  appointmentController.createManual
 );
 
 export default router;

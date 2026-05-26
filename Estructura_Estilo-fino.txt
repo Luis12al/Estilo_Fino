@@ -390,10 +390,3 @@ JSONB solo donde aporta flexibilidad real
 | 6 | **Notificaciones** (Recordatorios)          | ⬜ Pendiente |
 | 7 | **Deploy/Testing**                          | ⬜ Pendiente |
 
-
-estilo_fino_db_user:nE9vE4rUiOQUf1MROTuVC48dNiZfn4db@
-
-
-
-
-/estilo_fino_db

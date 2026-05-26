@@ -7,7 +7,12 @@ import { AppError } from '@shared/middlewares/error.middleware';
 import { AppointmentStatus } from '@prisma/client';
 import { prisma } from '@config/database';
 
-import { updateStatusSchema, extendAppointmentSchema, availabilityQuerySchema, manualBookingSchema } from './appointment.dto';
+import { 
+  updateStatusSchema, 
+  extendAppointmentSchema, 
+  availabilityQuerySchema, 
+  manualBookingSchema 
+} from './appointment.dto';
 
 export class AppointmentController {
   
@@ -18,7 +23,6 @@ export class AppointmentController {
     try {
       const validatedQuery = availabilityQuerySchema.parse(req.query);
       const availability = await appointmentService.getAvailability(validatedQuery);
-      
       res.status(200).json(successResponse(availability));
     } catch (error) {
       next(error);
@@ -26,15 +30,12 @@ export class AppointmentController {
   }
 
   /**
-   * POST /api/appointments
+   * POST /api/appointments — Cliente crea cita
    */
   async create(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      // ← CORREGIDO: tu req.user tiene 'userId', no 'id'
       const clientId = req.user?.userId;
-      if (!clientId) {
-        throw new AppError(401, 'Authentication required');
-      }
+      if (!clientId) throw new AppError(401, 'Authentication required');
 
       const appointment = await appointmentService.create(req.body, clientId);
       res.status(201).json(successResponse(appointment, 'Cita creada exitosamente'));
@@ -44,15 +45,12 @@ export class AppointmentController {
   }
 
   /**
-   * GET /api/appointments/my
+   * GET /api/appointments/my — Citas del cliente logueado
    */
   async getMyAppointments(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      // ← CORREGIDO: tu req.user tiene 'userId', no 'id'
       const clientId = req.user?.userId;
-      if (!clientId) {
-        throw new AppError(401, 'Authentication required');
-      }
+      if (!clientId) throw new AppError(401, 'Authentication required');
 
       const appointments = await appointmentService.getClientAppointments(clientId);
       res.status(200).json(successResponse(appointments));
@@ -61,13 +59,14 @@ export class AppointmentController {
     }
   }
 
+  /**
+   * GET /api/appointments/barber/me — Citas del barbero logueado (por fecha)
+   */
   async getMyBarberAppointments(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user?.userId;
-      if (!userId) {
-          throw new AppError(401, 'Authentication required');
-        }
-      // Buscar barberProfile por userId
+      if (!userId) throw new AppError(401, 'Authentication required');
+
       const profile = await barberService.findMyProfile(userId);
       const { date } = req.query as { date?: string };
       
@@ -79,11 +78,10 @@ export class AppointmentController {
   }
 
   /**
-   * GET /api/appointments/barber/:id
+   * GET /api/appointments/barber/:id — Citas de un barbero específico
    */
   async getBarberAppointments(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      // ← CORREGIDO: req.params.id puede ser string | string[], forzamos a string
       const barberId = String(req.params.id);
       const { date } = req.query as { date?: string };
       
@@ -94,128 +92,45 @@ export class AppointmentController {
     }
   }
 
-  async updateStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      console.log('🔍 BODY RECIBIDO:', req.body);
-      const userId = req.user?.userId;
-      if (!userId) throw new AppError(401, 'Authentication required');
-
-      const profile = await barberService.findMyProfile(userId);
-      const id = String(req.params.id);  // ← FIX: forzar a string
-      const validated = updateStatusSchema.parse(req.body);
-      console.log('✅ VALIDADO:', validated);
-      const updated = await appointmentService.updateStatus(
-        id,
-        profile.id,
-        validated.status as AppointmentStatus,
-        validated.reason
-      );
-
-      res.status(200).json(successResponse(updated, `Cita actualizada a ${validated.status}`));
-    } catch (error) {
-      console.log('❌ ERROR EN UPDATE STATUS:', error);
-      next(error);
-    }
-  }
-
   /**
-   * POST /api/appointments/:id/extend
-   * Extender cita +20min
+   * GET /api/appointments/barber/all — TODAS las citas del barbero logueado (con filtros)
+   * ← MÉTODO RECONSTRUIDO DESDE CERO
    */
-  async extend(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async getAllMyAppointments(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user?.userId;
       if (!userId) throw new AppError(401, 'Authentication required');
 
       const profile = await barberService.findMyProfile(userId);
-      const id = String(req.params.id);  // ← FIX: forzar a string
-      const validated = extendAppointmentSchema.parse(req.body);
+      const barberId = profile.id;
 
-      const extended = await appointmentService.extend(
-        id,
-        profile.id,
-        validated.additionalMinutes
-      );
-
-      res.status(200).json(successResponse(extended, `Cita extendida +${validated.additionalMinutes}min`));
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  /**
-   * GET /api/appointments/barber/stats
-   * Estadísticas del día
-   */
-  // En getTodayStats, asegurar que devuelva stats correctas:
-
-async getTodayStats(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const userId = req.user?.userId;
-      if (!userId) throw new AppError(401, 'Authentication required');
-
-      const profile = await barberService.findMyProfile(userId);
-      const stats = await appointmentService.getTodayStats(profile.id);
-      
-      // ← FIX: Asegurar que stats nunca sea null
-      const safeStats = stats || {
-        total: 0,
-        pending: 0,
-        confirmed: 0,
-        inProgress: 0,
-        completed: 0,
-        cancelled: 0,
-      };
-      
-      res.status(200).json(successResponse(safeStats));
-    } catch (error) {
-      next(error);
-    }
-  }
-
-
-   /**
-   * GET /api/appointments/barber/all
-   * Todas las citas del barbero (sin filtro de fecha)
-   */
-    async getAllMyAppointments(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const userId = req.user?.userId;
-      if (!userId) throw new AppError(401, 'Authentication required');
-
-      const profile = await barberService.findMyProfile(userId);
-      console.log('🔍 [getAllMyAppointments] userId:', userId, '| barberId:', profile.id);
-
+      // Extraer filtros de query params
       const { status, from, to, search } = req.query;
 
-      // ← FIX: Construir WHERE paso a paso, evitando objetos vacíos
-      const where: any = {
-        barberId: profile.id,
-      };
+      // Construir WHERE dinámico
+      const where: any = { barberId };
 
-      // Filtro por estado (solo si se proporciona y no está vacío)
-      const statusStr = status ? String(status).trim() : '';
-      if (statusStr) {
-        where.status = statusStr;
+      // ← FIX: Validar que status no sea string vacío
+      if (status && String(status).trim() && String(status).trim() !== '') {
+        where.status = String(status).trim();
       }
 
-      // Filtro por fecha DESDE
-      const fromStr = from ? String(from).trim() : '';
-      if (fromStr) {
-        const fromDate = new Date(fromStr + 'T00:00:00');
-        where.startTime = { ...where.startTime, gte: fromDate };
+      if (from && String(from).trim() && String(from).trim() !== '') {
+        const fromDate = new Date(String(from) + 'T00:00:00');
+        if (!isNaN(fromDate.getTime())) {
+          where.startTime = { ...where.startTime, gte: fromDate };
+        }
       }
 
-      // Filtro por fecha HASTA
-      const toStr = to ? String(to).trim() : '';
-      if (toStr) {
-        const toDate = new Date(toStr + 'T23:59:59.999');
-        where.startTime = { ...where.startTime, lte: toDate };
+      if (to && String(to).trim() && String(to).trim() !== '') {
+        const toDate = new Date(String(to) + 'T23:59:59.999');
+        if (!isNaN(toDate.getTime())) {
+          where.startTime = { ...where.startTime, lte: toDate };
+        }
       }
 
-      // Filtro por búsqueda de texto
-      const searchStr = search ? String(search).trim() : '';
-      if (searchStr) {
+      if (search && String(search).trim() && String(search).trim() !== '') {
+        const searchStr = String(search).trim();
         where.OR = [
           { client: { firstName: { contains: searchStr, mode: 'insensitive' } } },
           { client: { lastName: { contains: searchStr, mode: 'insensitive' } } },
@@ -224,6 +139,8 @@ async getTodayStats(req: Request, res: Response, next: NextFunction): Promise<vo
         ];
       }
 
+      // ← FIX: Si no hay status en el where, asegurar que no se filtre por status vacío
+      console.log('🔍 [getAllMyAppointments] barberId:', barberId);
       console.log('🔍 [getAllMyAppointments] WHERE:', JSON.stringify(where, null, 2));
 
       const appointments = await prisma.appointment.findMany({
@@ -273,9 +190,79 @@ async getTodayStats(req: Request, res: Response, next: NextFunction): Promise<vo
       next(error);
     }
   }
+
   /**
-   * POST /api/appointments/barber/create-for-client
-   * Barbero agenda cita para un cliente
+   * GET /api/appointments/barber/stats — Estadísticas del día
+   */
+  async getTodayStats(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = req.user?.userId;
+      if (!userId) throw new AppError(401, 'Authentication required');
+
+      const profile = await barberService.findMyProfile(userId);
+      const stats = await appointmentService.getTodayStats(profile.id);
+      
+      const safeStats = stats || {
+        total: 0, pending: 0, confirmed: 0, inProgress: 0, completed: 0, cancelled: 0,
+      };
+      
+      res.status(200).json(successResponse(safeStats));
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * PATCH /api/appointments/:id/status — Cambiar estado
+   */
+  async updateStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = req.user?.userId;
+      if (!userId) throw new AppError(401, 'Authentication required');
+
+      const profile = await barberService.findMyProfile(userId);
+      const id = String(req.params.id);
+      const validated = updateStatusSchema.parse(req.body);
+
+      const updated = await appointmentService.updateStatus(
+        id,
+        profile.id,
+        validated.status as AppointmentStatus,
+        validated.reason
+      );
+
+      res.status(200).json(successResponse(updated, `Cita actualizada a ${validated.status}`));
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * POST /api/appointments/:id/extend — Extender cita
+   */
+  async extend(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = req.user?.userId;
+      if (!userId) throw new AppError(401, 'Authentication required');
+
+      const profile = await barberService.findMyProfile(userId);
+      const id = String(req.params.id);
+      const validated = extendAppointmentSchema.parse(req.body);
+
+      const extended = await appointmentService.extend(
+        id,
+        profile.id,
+        validated.additionalMinutes
+      );
+
+      res.status(200).json(successResponse(extended, `Cita extendida +${validated.additionalMinutes}min`));
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * POST /api/appointments/barber/create-for-client — Agendar para cliente registrado
    */
   async createForClient(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -283,17 +270,13 @@ async getTodayStats(req: Request, res: Response, next: NextFunction): Promise<vo
       if (!userId) throw new AppError(401, 'Authentication required');
 
       const profile = await barberService.findMyProfile(userId);
-      
-      // Body: { clientId, startTime, serviceIds[], notes? }
       const { clientId, startTime, serviceIds, notes } = req.body;
 
-      // Validar que el cliente existe
       const client = await prisma.user.findFirst({
         where: { id: clientId, role: 'CLIENT' },
       });
       if (!client) throw new AppError(404, 'Cliente no encontrado');
 
-      // Usar el mismo método create del service pero con el clientId proporcionado
       const appointment = await appointmentService.create(
         { barberId: profile.id, startTime, serviceIds, notes },
         clientId
@@ -305,20 +288,15 @@ async getTodayStats(req: Request, res: Response, next: NextFunction): Promise<vo
     }
   }
 
-
-   /**
-   * POST /api/appointments/barber/quick-book
-   * Barbero agenda cita para cliente no registrado (walk-in)
+  /**
+   * POST /api/appointments/barber/manual — Agendar walk-in (cliente no registrado)
    */
-
   async createManual(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user?.userId;
       if (!userId) throw new AppError(401, 'Authentication required');
 
       const profile = await barberService.findMyProfile(userId);
-      
-      // Validar body con Zod
       const validated = manualBookingSchema.parse(req.body);
 
       const appointment = await appointmentService.createManual(validated, profile.id);
@@ -328,7 +306,6 @@ async getTodayStats(req: Request, res: Response, next: NextFunction): Promise<vo
       next(error);
     }
   }
-
 }
 
 export const appointmentController = new AppointmentController();

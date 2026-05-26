@@ -1,9 +1,8 @@
-// frontend/src/hooks/useBarberAppointments.ts
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { appointmentApi, type Appointment } from '@api/appointment.api';
 
 interface UseBarberAppointmentsOptions {
-  date?: string;
+  date?: string; // Si se pasa, modo Dashboard. Si no, modo Lista General.
   autoFetch?: boolean;
 }
 
@@ -19,6 +18,7 @@ interface TodayStatsData {
 export const useBarberAppointments = (options: UseBarberAppointmentsOptions = {}) => {
   const { date, autoFetch = true } = options;
 
+  // ── Estados principales ──
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [stats, setStats] = useState<TodayStatsData>({
     total: 0, pending: 0, confirmed: 0, inProgress: 0, completed: 0, cancelled: 0,
@@ -27,36 +27,56 @@ export const useBarberAppointments = (options: UseBarberAppointmentsOptions = {}
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   
+  // ── Estados de filtros (solo modo lista) ──
   const [filterStatus, setFilterStatus] = useState('');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
 
+  // ── Refs para control ──
   const isMounted = useRef(true);
+  const isInitialLoadDone = useRef(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
+
   useEffect(() => {
     isMounted.current = true;
-    return () => { isMounted.current = false; };
+    return () => { 
+      isMounted.current = false;
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
   }, []);
 
-  // ── Fetch citas del día (Dashboard) ──
-  const fetchTodayAppointments = useCallback(async (targetDate?: string) => {
-    const queryDate = targetDate || date;
-    if (!queryDate || !isMounted.current) return;
+  // ── Cancelar petición anterior ──
+  const cancelPrevious = useCallback(() => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    abortControllerRef.current = new AbortController();
+  }, []);
+
+  // ── Fetch citas del día (modo Dashboard) ──
+  const fetchTodayAppointments = useCallback(async () => {
+    if (!date || !isMounted.current) return;
     
+    cancelPrevious();
     setLoading(true);
     setError(null);
 
     try {
-      const response = await appointmentApi.getMyBarberAppointments(queryDate);
+      const response = await appointmentApi.getMyBarberAppointments(date);
       if (isMounted.current) {
         if (response.success && response.data) {
           setAppointments(response.data);
+          setError(null);
         } else {
           setError(response.message || 'Error al cargar citas');
           setAppointments([]);
         }
       }
     } catch (err: any) {
+      if (err.name === 'AbortError') return; // Ignorar cancelaciones
       if (isMounted.current) {
         setError(err.response?.data?.message || 'Error de conexión');
         setAppointments([]);
@@ -64,7 +84,7 @@ export const useBarberAppointments = (options: UseBarberAppointmentsOptions = {}
     } finally {
       if (isMounted.current) setLoading(false);
     }
-  }, [date]);
+  }, [date, cancelPrevious]);
 
   // ── Fetch stats del día ──
   const fetchStats = useCallback(async () => {
@@ -90,7 +110,7 @@ export const useBarberAppointments = (options: UseBarberAppointmentsOptions = {}
     }
   }, []);
 
-  // ── Fetch TODAS las citas (Lista con filtros) ──
+  // ── Fetch TODAS las citas (modo Lista) ──
   const fetchAllAppointments = useCallback(async (params?: {
     status?: string;
     from?: string;
@@ -98,10 +118,13 @@ export const useBarberAppointments = (options: UseBarberAppointmentsOptions = {}
     search?: string;
   }) => {
     if (!isMounted.current) return;
+    
+    cancelPrevious();
     setLoading(true);
     setError(null);
     
     try {
+      // ← FIX: Solo enviar parámetros que tengan valor real
       const cleanParams: Record<string, string> = {};
       if (params?.status?.trim()) cleanParams.status = params.status.trim();
       if (params?.from?.trim()) cleanParams.from = params.from.trim();
@@ -119,12 +142,14 @@ export const useBarberAppointments = (options: UseBarberAppointmentsOptions = {}
       if (isMounted.current) {
         if (response.success && response.data) {
           setAppointments(response.data);
+          setError(null);
         } else {
           setError(response.message || 'Error al cargar citas');
           setAppointments([]);
         }
       }
     } catch (err: any) {
+      if (err.name === 'AbortError') return;
       console.error('❌ [Hook] Error:', err);
       if (isMounted.current) {
         setError(err.response?.data?.message || 'Error al cargar citas');
@@ -133,23 +158,30 @@ export const useBarberAppointments = (options: UseBarberAppointmentsOptions = {}
     } finally {
       if (isMounted.current) setLoading(false);
     }
-  }, []);
+  }, [cancelPrevious]);
 
-  // Efecto de carga inicial
+  // ── Efecto de carga inicial ÚNICO ──
+  // ← FIX: Solo se ejecuta UNA VEZ al montar, o cuando cambia date
   useEffect(() => {
-    if (!autoFetch) return;
+    if (!autoFetch || isInitialLoadDone.current) return;
+    
+    isInitialLoadDone.current = true;
+    
     if (date) {
-      fetchTodayAppointments(date);
+      // Modo Dashboard
+      fetchTodayAppointments();
       fetchStats();
     } else {
+      // Modo Lista: cargar TODAS sin filtros
       fetchAllAppointments();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoFetch, date]);
 
-  // Efecto para filtros (solo modo lista)
+  // ── Efecto para filtros (solo modo lista, NO en primera carga) ──
+  // ← FIX: Debounce con 500ms y solo ejecutar después de la carga inicial
   useEffect(() => {
-    if (!autoFetch || date) return;
+    if (!autoFetch || date || !isInitialLoadDone.current) return;
     
     const timeout = setTimeout(() => {
       fetchAllAppointments({
@@ -158,12 +190,13 @@ export const useBarberAppointments = (options: UseBarberAppointmentsOptions = {}
         to: dateTo || undefined,
         search: searchQuery || undefined,
       });
-    }, 300);
+    }, 500); // ← Aumentado a 500ms para evitar múltiples llamadas rápidas
 
     return () => clearTimeout(timeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterStatus, dateFrom, dateTo, searchQuery]);
 
+  // ── Refrescar según modo actual ──
   const refresh = useCallback(() => {
     if (date) {
       fetchTodayAppointments();
@@ -178,6 +211,7 @@ export const useBarberAppointments = (options: UseBarberAppointmentsOptions = {}
     }
   }, [date, filterStatus, dateFrom, dateTo, searchQuery, fetchTodayAppointments, fetchStats, fetchAllAppointments]);
 
+  // ── Acciones ──
   const updateStatus = useCallback(async (
     id: string,
     payload: { status: 'CONFIRMED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED'; reason?: string }

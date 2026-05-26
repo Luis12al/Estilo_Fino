@@ -124,7 +124,7 @@ export const appointmentApi = {
   const url = queryString ? `/appointments/barber/all?${queryString}` : '/appointments/barber/all';
   
   return api
-    .get<ApiResponse<Appointment[]>>(url)  // ← SIN headers de cache
+    .get<ApiResponse<Appointment[]>>(url)
     .then((res) => res.data);
 },
 
