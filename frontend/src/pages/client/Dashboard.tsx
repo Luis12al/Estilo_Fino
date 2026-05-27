@@ -8,7 +8,7 @@ import { serviceApi } from '@api/service.api';
 import { offerApi } from '@api/offer.api';
 import {
   LogOut, Calendar, Clock, User, Scissors, Star,
-  ChevronRight, Bell, MapPin, ArrowRight
+  ChevronRight, Bell, MapPin, ArrowRight, Percent, DollarSign, Loader
 } from 'lucide-react';
 
 interface DashboardStats {
@@ -39,23 +39,22 @@ export default function ClientDashboard() {
   const [upcomingAppointments, setUpcomingAppointments] = useState<UpcomingAppointment[]>([]);
   const [barbers, setBarbers] = useState<any[]>([]);
   const [offers, setOffers] = useState<any[]>([]);
+  const [offersLoading, setOffersLoading] = useState(true);
   const [loading, setLoading] = useState(true);
 
- useEffect(() => {
+  useEffect(() => {
     const loadDashboard = async () => {
       try {
-        // Cargar datos en paralelo con manejo de errores individual
-        // Si uno falla, los demás siguen funcionando
         const [barbersRes, servicesRes, offersRes, appointmentsRes] = await Promise.all([
           barberApi.getAll().catch(err => {
             console.error('Error cargando barberos:', err);
-            return { success: true, data: [] }; // Fallback vacío
+            return { success: true, data: [] };
           }),
           serviceApi.getAll().catch(err => {
             console.error('Error cargando servicios:', err);
             return { success: true, data: [] };
           }),
-          offerApi.getAll().catch(err => {
+          offerApi.getAllPublic().catch(err => {
             console.error('Error cargando ofertas:', err);
             return { success: true, data: [] };
           }),
@@ -65,18 +64,10 @@ export default function ClientDashboard() {
           }),
         ]);
 
-        // Extraer datos con fallback seguro
         const barbersData = Array.isArray(barbersRes.data) ? barbersRes.data : [];
         const servicesData = Array.isArray(servicesRes.data) ? servicesRes.data : [];
         const offersData = Array.isArray(offersRes.data) ? offersRes.data : [];
         const appointmentsData = Array.isArray(appointmentsRes.data) ? appointmentsRes.data : [];
-
-        console.log('✅ Dashboard cargado:', {
-          barbers: barbersData.length,
-          services: servicesData.length,
-          offers: offersData.length,
-          appointments: appointmentsData.length
-        });
 
         setStats({
           barbersCount: barbersData.length,
@@ -89,10 +80,9 @@ export default function ClientDashboard() {
 
         setBarbers(barbersData.slice(0, 3));
         
-        const activeOffers = offersData
-          .filter((o: any) => o.isActive !== false)
-          .slice(0, 3);
-        setOffers(activeOffers);
+        // ← FIX: Usar ofertas reales del backend (ya filtradas por vigencia)
+        setOffers(offersData.slice(0, 3));
+        setOffersLoading(false);
 
         const upcoming = appointmentsData
           .filter((a: any) => new Date(a.startTime) > new Date())
@@ -113,6 +103,7 @@ export default function ClientDashboard() {
         setUpcomingAppointments(upcoming);
       } catch (err) {
         console.error('❌ Error general loading dashboard:', err);
+        setOffersLoading(false);
       } finally {
         setLoading(false);
       }
@@ -143,6 +134,20 @@ export default function ClientDashboard() {
       month: 'short',
       hour: '2-digit',
       minute: '2-digit',
+    });
+  };
+
+  const formatDiscount = (offer: any) => {
+    if (offer.discountPercent) return `${offer.discountPercent}% OFF`;
+    if (offer.discountAmount) return `$${Number(offer.discountAmount).toLocaleString()} OFF`;
+    return 'Promoción especial';
+  };
+
+  const formatOfferDate = (dateStr: string | null) => {
+    if (!dateStr) return '';
+    return new Date(dateStr).toLocaleDateString('es-ES', {
+      day: 'numeric',
+      month: 'long',
     });
   };
 
@@ -337,7 +342,9 @@ export default function ClientDashboard() {
           </div>
         </div>
 
-        {/* Ofertas Section */}
+        {/* ============================================
+            OFERTAS — DATOS REALES DEL BACKEND
+            ============================================ */}
         {offers.length > 0 && (
           <div>
             <div className="flex items-center justify-between mb-6">
@@ -351,33 +358,68 @@ export default function ClientDashboard() {
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              {offers.map((offer) => (
-                <div key={offer.id} className="bg-[#1E1E1E] rounded-2xl overflow-hidden border border-[#2A2A2A] hover:border-[#3A3A3A] transition-all group cursor-pointer">
-                  <div className="h-32 bg-gradient-to-br from-[#C9A84C]/20 to-[#C9A84C]/5 flex items-center justify-center">
-                    <Star size={40} className="text-[#C9A84C]/30" />
-                  </div>
-                  <div className="p-5">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className={`text-xs px-2 py-1 rounded-full ${
-                        offer.validUntil && new Date(offer.validUntil) > new Date()
-                          ? 'bg-blue-500/10 text-blue-400'
-                          : 'bg-[#C9A84C]/10 text-[#C9A84C]'
-                      }`}>
-                        {offer.validUntil ? 'Por tiempo limitado' : 'Permanente'}
-                      </span>
+            {offersLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader size={24} className="text-[#C9A84C] animate-spin" />
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                {offers.map((offer) => (
+                  <div key={offer.id} className="bg-[#1E1E1E] rounded-2xl overflow-hidden border border-[#2A2A2A] hover:border-[#C9A84C]/30 transition-all group">
+                    {/* Imagen */}
+                    <div className="h-32 bg-[#252525] relative overflow-hidden">
+                      {offer.imageUrl ? (
+                        <img
+                          src={offer.imageUrl}
+                          alt={offer.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).style.display = 'none';
+                          }}
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <Star size={40} className="text-[#3A3A3A]" />
+                        </div>
+                      )}
+                      <div className="absolute top-2 left-2">
+                        <span className={`px-2 py-0.5 rounded-lg text-xs font-medium backdrop-blur-sm ${
+                          offer.type === 'PERMANENT'
+                            ? 'bg-blue-500/20 text-blue-400'
+                            : 'bg-orange-500/20 text-orange-400'
+                        }`}>
+                          {offer.type === 'PERMANENT' ? 'Permanente' : 'Tiempo limitado'}
+                        </span>
+                      </div>
                     </div>
-                    <h4 className="text-white font-semibold mb-1">{offer.title}</h4>
-                    {offer.description && (
-                      <p className="text-[#9CA3AF] text-sm mb-3 line-clamp-2">{offer.description}</p>
-                    )}
-                    <button className="w-full py-2.5 bg-[#252525] hover:bg-[#C9A84C] hover:text-[#1A1A1A] text-[#9CA3AF] rounded-lg transition-all text-sm font-medium">
-                      Ver detalles
-                    </button>
+
+                    {/* Contenido */}
+                    <div className="p-4 space-y-2">
+                      <h4 className="text-white font-semibold group-hover:text-[#C9A84C] transition-colors">
+                        {offer.title}
+                      </h4>
+                      {offer.description && (
+                        <p className="text-[#9CA3AF] text-xs line-clamp-2">{offer.description}</p>
+                      )}
+                      <div className="flex items-center gap-1.5">
+                        {offer.discountPercent ? (
+                          <Percent size={14} className="text-[#C9A84C]" />
+                        ) : (
+                          <DollarSign size={14} className="text-[#C9A84C]" />
+                        )}
+                        <span className="text-[#C9A84C] font-bold text-sm">{formatDiscount(offer)}</span>
+                      </div>
+                      {offer.type === 'LIMITED_TIME' && offer.validUntil && (
+                        <p className="text-orange-400/70 text-xs flex items-center gap-1">
+                          <Calendar size={10} />
+                          Hasta {formatOfferDate(offer.validUntil)}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>

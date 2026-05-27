@@ -9,6 +9,7 @@ import AdminSchedule from '@pages/admin/Schedule';
 import AdminDashboard from '@pages/admin/Dashboard';
 import Appointments from '@pages/admin/Appointments';
 import BarberProfile from '@pages/admin/BarberProfile';
+import AdminOffers from '@pages/admin/Offers';
 
 
 // Pages Public
@@ -61,7 +62,8 @@ const router = createBrowserRouter([
           { path: '/admin/services', element: <AdminServices /> }, // ← NUEVO AdminSchedule Appointments
           { path: '/admin/schedule', element: <AdminSchedule /> },
           { path: '/admin/appointments', element: <Appointments /> },
-          { path: '/admin/profile', element: <BarberProfile /> }
+          { path: '/admin/profile', element: <BarberProfile /> },
+          { path: '/admin/offers', element: <AdminOffers /> },
 
         ],
       },

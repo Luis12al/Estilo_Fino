@@ -370,15 +370,17 @@ JSONB solo donde aporta flexibilidad real
 
 # Estado actual del proyecto
 
-| #  | Módulo                         | Estado                 |
-| -- | ------------------------------ | ---------------------- |
-| 1  | **Autenticación**              | ✅ Backend + Frontend   |
-| 2  | **Servicios**                  | ✅ Backend + Frontend   |
-| 3  | **Barberos**                   | ✅ Backend + Frontend   |
-| 4  | **Agenda/Disponibilidad**      | ✅ Backend + Frontend   |
-| 5  | **Reserva de Citas** (cliente) | ✅ Backend + Frontend   |
-| 6  | **Gestión Citas (Admin)**      | ✅ Backend + Frontend   |
-| 6a | *Agendamiento manual walk-in*  | ✅ **Completado ahora** |
+| #  | Módulo                                      | Estado               |
+| -- | ------------------------------------------- | -------------------- |
+| 1  | **Autenticación**                           | ✅ Backend + Frontend |
+| 2  | **Servicios**                               | ✅ Backend + Frontend |
+| 3  | **Barberos**                                | ✅ Backend + Frontend |
+| 4  | **Agenda/Disponibilidad**                   | ✅ Backend + Frontend |
+| 5  | **Reserva de Citas** (cliente)              | ✅ Backend + Frontend |
+| 6  | **Gestión Citas (Admin)**                   | ✅ Backend + Frontend |
+| 6a | *Agendamiento manual walk-in*               | ✅ Completado         |
+| 6b | *Visualizador general de citas con filtros* | ✅ **Corregido**      |
+
 
 
 

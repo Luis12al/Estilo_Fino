@@ -10,6 +10,7 @@ import barberRoutes from '@modules/barbers/barber.routes';
 import appointmentRoutes from '@modules/appointments/appointment.routes';
 import offerRoutes from '@modules/offers/offers.routes';
 
+
 const app = express();
 
 // ← FIX: Orígenes permitidos (local + producción)
