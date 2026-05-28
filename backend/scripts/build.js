@@ -4,6 +4,18 @@ const fs = require('fs');
 const path = require('path');
 
 const distDir = path.join(__dirname, '..', 'dist');
+const prismaBin = path.join(__dirname, '..', 'node_modules', '.bin', 'prisma');
+
+// Helper para ejecutar prisma de forma confiable
+function runPrisma(cmd) {
+  // Intentar con npx primero, fallback a binario directo
+  try {
+    execSync(`npx prisma ${cmd}`, { stdio: 'inherit' });
+  } catch {
+    console.log(`⚠️ npx prisma failed, trying direct binary...`);
+    execSync(`node ${prismaBin} ${cmd}`, { stdio: 'inherit' });
+  }
+}
 
 // 1. Limpiar dist anterior
 console.log('🧹 Cleaning dist/...');
@@ -13,11 +25,11 @@ if (fs.existsSync(distDir)) {
 
 // 2. Generar Prisma Client
 console.log('🔧 Generating Prisma Client...');
-execSync('npx prisma generate', { stdio: 'inherit' });
+runPrisma('generate');
 
 // 3. Ejecutar migraciones en producción
 console.log('🗄️  Running database migrations...');
-execSync('npx prisma migrate deploy', { stdio: 'inherit' });
+runPrisma('migrate deploy');
 
 // 4. Compilar TypeScript
 console.log('🔨 Compiling TypeScript...');
@@ -40,7 +52,7 @@ if (!fs.existsSync(serverPath)) {
   process.exit(1);
 }
 
-// 7. Fix paths — ahora los archivos están en dist/ directamente (sin src/)
+// 7. Fix paths
 const aliases = {
   '@config/': 'config/',
   '@modules/': 'modules/',
