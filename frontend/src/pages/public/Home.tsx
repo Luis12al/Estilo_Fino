@@ -86,15 +86,15 @@ export default function Home() {
           {/* Stats */}
           <div className="grid grid-cols-3 gap-8 max-w-lg mx-auto mt-16 pt-8 border-t border-[#2A2A2A]">
             <div>
-              <div className="text-3xl font-bold text-[#C9A84C]">15+</div>
+              <div className="text-3xl font-bold text-[#C9A84C]">2</div>
               <div className="text-[#9CA3AF] text-sm mt-1">Barberos expertos</div>
             </div>
-            <div>
-              <div className="text-3xl font-bold text-[#C9A84C]">10k+</div>
+            {/* <div>
+              <div className="text-3xl font-bold text-[#C9A84C]">50+</div>
               <div className="text-[#9CA3AF] text-sm mt-1">Clientes felices</div>
-            </div>
+            </div> */}
             <div>
-              <div className="text-3xl font-bold text-[#C9A84C]">4.9</div>
+              <div className="text-3xl font-bold text-[#C9A84C]">4.0</div>
               <div className="text-[#9CA3AF] text-sm mt-1">Calificación promedio</div>
             </div>
           </div>
