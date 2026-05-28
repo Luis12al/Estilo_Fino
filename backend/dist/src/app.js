@@ -14,6 +14,7 @@ const service_routes_1 = __importDefault(require("../modules/services/service.ro
 const barber_routes_1 = __importDefault(require("../modules/barbers/barber.routes"));
 const appointment_routes_1 = __importDefault(require("../modules/appointments/appointment.routes"));
 const offers_routes_1 = __importDefault(require("../modules/offers/offers.routes"));
+const products_routes_1 = __importDefault(require("../modules/products/products.routes"));
 const app = (0, express_1.default)();
 // ← FIX: Orígenes permitidos (local + producción)
 const allowedOrigins = [
@@ -64,6 +65,7 @@ app.use('/api/services', service_routes_1.default);
 app.use('/api/barbers', barber_routes_1.default);
 app.use('/api/appointments', appointment_routes_1.default);
 app.use('/api/offers', offers_routes_1.default);
+app.use('/api/products', products_routes_1.default);
 // 404 handler
 app.use((_req, res) => {
     res.status(404).json({ success: false, error: 'Route not found' });
