@@ -6,9 +6,10 @@ import { appointmentApi } from '@api/appointment.api';
 import { barberApi } from '@api/barber.api';
 import { serviceApi } from '@api/service.api';
 import { offerApi } from '@api/offer.api';
+import { productApi } from '@api/product.api';
 import {
   LogOut, Calendar, Clock, User, Scissors, Star,
-  ChevronRight, Bell, MapPin, ArrowRight, Percent, DollarSign, Loader
+  ChevronRight, Bell, MapPin, ArrowRight, Percent, DollarSign, Loader, ShoppingBag 
 } from 'lucide-react';
 
 interface DashboardStats {
@@ -41,11 +42,13 @@ export default function ClientDashboard() {
   const [offers, setOffers] = useState<any[]>([]);
   const [offersLoading, setOffersLoading] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState<any[]>([]);
+  const [productsLoading, setProductsLoading] = useState(true);
 
   useEffect(() => {
     const loadDashboard = async () => {
       try {
-        const [barbersRes, servicesRes, offersRes, appointmentsRes] = await Promise.all([
+        const [barbersRes, servicesRes, offersRes, appointmentsRes, productsRes] = await Promise.all([
           barberApi.getAll().catch(err => {
             console.error('Error cargando barberos:', err);
             return { success: true, data: [] };
@@ -62,12 +65,17 @@ export default function ClientDashboard() {
             console.error('Error cargando citas:', err);
             return { success: true, data: [] };
           }),
+          productApi.getAllPublic().catch(err => {
+           console.error('Error cargando productos:', err);
+           return { success: true, data: [] };
+         }),
         ]);
 
         const barbersData = Array.isArray(barbersRes.data) ? barbersRes.data : [];
         const servicesData = Array.isArray(servicesRes.data) ? servicesRes.data : [];
         const offersData = Array.isArray(offersRes.data) ? offersRes.data : [];
         const appointmentsData = Array.isArray(appointmentsRes.data) ? appointmentsRes.data : [];
+        const productsData = Array.isArray(productsRes.data) ? productsRes.data : [];
 
         setStats({
           barbersCount: barbersData.length,
@@ -77,6 +85,9 @@ export default function ClientDashboard() {
             (a: any) => ['PENDING', 'CONFIRMED'].includes(a.status)
           ).length,
         });
+
+         setProducts(productsData.slice(0, 3));
+         setProductsLoading(false);
 
         setBarbers(barbersData.slice(0, 3));
         
@@ -422,6 +433,63 @@ export default function ClientDashboard() {
             )}
           </div>
         )}
+
+        {/* ============================================
+            PRODUCTOS — TIENDA PREVIEW
+            ============================================ */}
+        {products.length > 0 && (
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="text-xl font-bold text-white mb-1">Tienda</h3>
+                <p className="text-[#9CA3AF] text-sm">Productos exclusivos para ti</p>
+              </div>
+              <Link to="/client/store" className="text-[#C9A84C] hover:text-[#B8983F] text-sm font-medium flex items-center gap-1 transition-colors">
+                Ver tienda
+                <ChevronRight size={16} />
+              </Link>
+            </div>
+
+            {productsLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader size={24} className="text-[#C9A84C] animate-spin" />
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                {products.map((product) => (
+                  <div key={product.id} className="bg-[#1E1E1E] rounded-2xl overflow-hidden border border-[#2A2A2A] hover:border-[#3A3A3A] transition-all group">
+                    <div className="h-32 bg-[#252525] relative overflow-hidden">
+                      {product.imageUrl ? (
+                        <img
+                          src={product.imageUrl}
+                          alt={product.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).style.display = 'none';
+                          }}
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <ShoppingBag size={40} className="text-[#3A3A3A]" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-4">
+                      <h4 className="text-white font-semibold group-hover:text-[#C9A84C] transition-colors">
+                        {product.name}
+                      </h4>
+                      <p className="text-[#C9A84C] font-bold mt-1">
+                        ${Number(product.price).toLocaleString('es-CO')}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+
       </div>
     </div>
   );

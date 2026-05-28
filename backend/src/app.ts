@@ -9,6 +9,9 @@ import serviceRoutes from '@modules/services/service.routes';
 import barberRoutes from '@modules/barbers/barber.routes';
 import appointmentRoutes from '@modules/appointments/appointment.routes';
 import offerRoutes from '@modules/offers/offers.routes';
+import productRoutes from '@modules/products/products.routes';
+
+
 
 
 const app = express();
@@ -72,6 +75,7 @@ app.use('/api/services', serviceRoutes);
 app.use('/api/barbers', barberRoutes);
 app.use('/api/appointments', appointmentRoutes);
 app.use('/api/offers', offerRoutes);
+app.use('/api/products', productRoutes);
 
 // 404 handler
 app.use((_req, res) => {

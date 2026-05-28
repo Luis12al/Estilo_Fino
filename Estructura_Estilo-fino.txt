@@ -35,9 +35,9 @@ backend/
 │   │   │   ├── service.routes.ts✅
 │   │   │   └── service.dto.ts✅
 │   │   ├── offers/✅                 ← CRUD ofertas
-│   │   │   ├── offers.controller.ts✅
+│   │   │   ├── offers.controller.ts✅ ← Endpoints
 │   │   │   ├── offers.service.ts✅
-│   │   │   ├── offers.routes.ts✅
+│   │   │   ├── offers.routes.ts✅ ← Rutas Express
 │   │   │   └── offers.dto.ts✅
 │   │   └── products/✅               ← CRUD productos
 │   │   │   ├── products.controller.ts✅
@@ -300,7 +300,22 @@ JSONB solo donde aporta flexibilidad real
 [x]Backend service.controller.ts — Endpoints público/admin correctos
 [x]Backend service.routes.ts — Protección de rutas verificada
 [x]Flujo booking paso 2 — Servicios visibles y seleccionables
-
+# OFERTAS
+(admin)
+[x] Grid de tarjetas con imagen, tipo, estado, precios
+[x] Precio original ~~tachado~~ + precio final destacado + badge de descuento
+[x] Filtros: Activas / Todas
+[x] Modal de creación/edición con:
+ * Precio original + % descuento → precio final auto-calculado
+ * Preview del ahorro del cliente
+ * Selector de tipo (Permanente / Por tiempo limitado)
+ * Fechas condicionales
+[x] Soft delete (desactivar/reactivar)
+[x] Totalmente responsivo (mobile → tablet → desktop)
+(client)
+[x] Home: Sección de ofertas con datos reales del backend
+[x] Dashboard: Tarjetas de ofertas activas
+[x] Precios formateados con descuento visible
 
 # ESTADO ACTUAL DEL MÓDULO SERVICIOS✅
 | Componente                                      | Estado |
@@ -380,6 +395,7 @@ JSONB solo donde aporta flexibilidad real
 | 6  | **Gestión Citas (Admin)**                   | ✅ Backend + Frontend |
 | 6a | *Agendamiento manual walk-in*               | ✅ Completado         |
 | 6b | *Visualizador general de citas con filtros* | ✅ **Corregido**      |
+| 7 | **Ofertas** (CRUD + visualización)           | ✅ Backend + Frontend |
 
 
 
@@ -387,8 +403,48 @@ JSONB solo donde aporta flexibilidad real
 | # | Módulo                                      | Estado      |
 | - | ------------------------------------------- | ----------- |
 | 3 | **Revisión General** (gaps + documentación) | ⬜ Pendiente |
-| 4 | **Ofertas** (CRUD + visualización)          | ⬜ Pendiente |
 | 5 | **Productos** (CRUD + Tienda)               | ⬜ Pendiente |
 | 6 | **Notificaciones** (Recordatorios)          | ⬜ Pendiente |
 | 7 | **Deploy/Testing**                          | ⬜ Pendiente |
 
+
+Actúa como un Arquitecto de Software Senior + Desarrollador Full Stack experto en sistemas de reservas.
+
+Tu objetivo es ayudarme a desarrollar paso a paso un sistema completo de gestión de cupos para una barbería, con enfoque en escalabilidad, buenas prácticas y código limpio.
+
+No esta demás decir que ya tengo avances en el proyecto, puedes verlo en el archivo TXT adjuntado, además de ciertos requerimientos, estilos, etc.
+
+1. Continuar con el desarrollo del proyecto
+
+- Debemos desarrollar el modulo de productos con tas las especificaiones necesarias y solicitadas
+
+---------------------------------------------------------------------------------------
+Orden de desarrollo de los módulos
+1. Módulo de Servicios - CRUD completo para el admin. (Completado)
+
+2. Módulo de Citas (Admin) - Gestión completa: 
+* Iniciar, finalizar, cancelar, extender citas desde el dashboard. (Completado)
+* Agregar función para que el barbero pueda agendar citas mediante un formulario con toda la información correspondiente para agendar una cita, nombre del cliente, servicios que quiere el cliente, día fecha y hora (y toda la información necesaria para realizar el registro de la cita, sin necesidad de que el cliente este registrado). (Completado)
+* Visualizador general de citas con filtros de busqueda (hecho pero tiene novedades) 
+
+3. Revisión general del proyecto para identificar gaps y actualizar documentación del proyecto antes de continuar.
+
+4. Módulo de Ofertas - CRUD + visualización cliente y admin. (Completado)
+
+5. Módulo de Productos - CRUD + Tienda interna + visualización cliente y admin.
+
+6. Notificaciones - Recordatorios de citas, cambios de estado.
+
+7. Deploy/Testing - Pruebas end-to-end del flujo completo.
+
+
+⚠️ REGLAS IMPORTANTES:
+
+* No me des respuestas generales
+* No avances al siguiente paso sin que yo lo apruebe
+* Divide todo en fases claras (backend, frontend, base de datos, etc.)
+* Explica antes de codificar
+* Luego dame el código listo para producción
+* Usa buenas prácticas reales (no ejemplos básicos)
+* Todo debe ser modular y escalable
+* Pedirme los archivos que modificaremos antes de que empieces a crear código (amenos de que ya te lo haya mostrado)

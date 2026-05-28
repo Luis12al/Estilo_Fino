@@ -10,6 +10,8 @@ import AdminDashboard from '@pages/admin/Dashboard';
 import Appointments from '@pages/admin/Appointments';
 import BarberProfile from '@pages/admin/BarberProfile';
 import AdminOffers from '@pages/admin/Offers';
+import AdminProducts from '@pages/admin/Products';
+
 
 
 // Pages Public
@@ -24,6 +26,8 @@ import ClientBarbers from '@pages/client/Barbers';
 import ClientBooking from '@pages/client/Booking';
 import ClientAppointments from '@pages/client/MyAppointments';
 import ClientProfile from '@pages/client/Profile';
+import Store from '@pages/client/Store';
+
 
 
 
@@ -51,6 +55,7 @@ const router = createBrowserRouter([
           { path: '/client/booking', element: <ClientBooking /> },
           { path: '/client/appointments', element: <ClientAppointments /> },
           { path: '/client/profile', element: <ClientProfile /> },
+          { path: '/client/store', element: < Store /> },
         ],
       },
 
@@ -64,6 +69,7 @@ const router = createBrowserRouter([
           { path: '/admin/appointments', element: <Appointments /> },
           { path: '/admin/profile', element: <BarberProfile /> },
           { path: '/admin/offers', element: <AdminOffers /> },
+          { path: '/admin/products', element: <AdminProducts /> },
 
         ],
       },

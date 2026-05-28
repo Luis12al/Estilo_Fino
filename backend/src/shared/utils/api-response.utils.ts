@@ -1,6 +1,8 @@
 /**
  * Formato estandarizado de respuestas API.
  * Toda respuesta del backend usa esta estructura.
+ * 
+ / backend/src/shared/utils/api-response.utils.ts
  */
 export interface ApiResponse<T> {
   success: boolean;

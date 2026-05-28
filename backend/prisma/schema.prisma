@@ -187,20 +187,27 @@ model Offer {
 }
 
 model Product {
-  id          String         @id @default(uuid())
-  barberId    String?        @map("barber_id")
-  name        String         @db.VarChar(150)
-  description String?
-  price       Decimal        @db.Decimal(10, 2)
-  stock       Int            @default(0)
-  imageUrl    String?        @map("image_url") @db.VarChar(500)
-  isActive    Boolean        @default(true) @map("is_active")
-  createdAt   DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt   DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
-  barber      BarberProfile? @relation(fields: [barberId], references: [id])
+  id           String               @id @default(uuid())
+  barberId     String?              @map("barber_id")
+  name         String               @db.VarChar(150)
+  description  String?
+  price        Decimal              @db.Decimal(10, 2)
+  category     ProductCategory      @default(OTHER)
+  stock        Int                  @default(0)
+  imageUrl     String?              @map("image_url") @db.VarChar(500)
+  availability ProductAvailability  @default(PERMANENT) @map("availability_type")
+  limitedUntil DateTime?            @map("limited_until") @db.Timestamptz(6)
+  isActive     Boolean              @default(true) @map("is_active")
+  deletedAt    DateTime?            @map("deleted_at") @db.Timestamptz(6)
+  createdAt    DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime             @updatedAt @map("updated_at") @db.Timestamptz(6)
+  barber       BarberProfile?       @relation(fields: [barberId], references: [id])
 
   @@index([barberId])
+  @@index([category])
   @@index([isActive])
+  @@index([availability])
+  @@index([deletedAt])
   @@map("products")
 }
 
@@ -219,8 +226,24 @@ enum AppointmentStatus {
   NO_SHOW
 }
 
-// ← NUEVO: Enum para tipo de oferta
 enum OfferType {
   PERMANENT
   LIMITED_TIME
+}
+
+enum ProductCategory {
+  HAIR
+  BEARD
+  SKIN
+  ACCESSORIES
+  OTHER
+
+  @@map("product_category")
+}
+
+enum ProductAvailability {
+  PERMANENT
+  LIMITED
+
+  @@map("product_availability")
 }
