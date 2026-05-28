@@ -1,3 +1,4 @@
+// backend/scripts/build.js
 const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
@@ -12,11 +13,11 @@ if (fs.existsSync(distDir)) {
 
 // 2. Generar Prisma Client
 console.log('🔧 Generating Prisma Client...');
-execSync('node node_modules/prisma/build/index.js generate', { stdio: 'inherit' });
+execSync('npx prisma generate', { stdio: 'inherit' });
 
 // 3. Ejecutar migraciones en producción
 console.log('🗄️  Running database migrations...');
-execSync('node node_modules/prisma/build/index.js migrate deploy', { stdio: 'inherit' });
+execSync('npx prisma migrate deploy', { stdio: 'inherit' });
 
 // 4. Compilar TypeScript
 console.log('🔨 Compiling TypeScript...');
@@ -32,7 +33,14 @@ if (!fs.existsSync(distDir)) {
   process.exit(1);
 }
 
-// 6. Fix paths (resto del script sin cambios...)
+// 6. Verificar que server.js existe
+const serverPath = path.join(distDir, 'server.js');
+if (!fs.existsSync(serverPath)) {
+  console.error('❌ dist/server.js not found. Check tsconfig rootDir setting.');
+  process.exit(1);
+}
+
+// 7. Fix paths — ahora los archivos están en dist/ directamente (sin src/)
 const aliases = {
   '@config/': 'config/',
   '@modules/': 'modules/',
