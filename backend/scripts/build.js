@@ -4,17 +4,13 @@ const fs = require('fs');
 const path = require('path');
 
 const distDir = path.join(__dirname, '..', 'dist');
-const prismaBin = path.join(__dirname, '..', 'node_modules', '.bin', 'prisma');
+const prismaCli = path.join(__dirname, '..', 'node_modules', 'prisma', 'build', 'index.js');
 
 // Helper para ejecutar prisma de forma confiable
 function runPrisma(cmd) {
-  // Intentar con npx primero, fallback a binario directo
-  try {
-    execSync(`npx prisma ${cmd}`, { stdio: 'inherit' });
-  } catch {
-    console.log(`⚠️ npx prisma failed, trying direct binary...`);
-    execSync(`node ${prismaBin} ${cmd}`, { stdio: 'inherit' });
-  }
+  const fullCmd = `node ${prismaCli} ${cmd}`;
+  console.log(`Running: ${fullCmd}`);
+  execSync(fullCmd, { stdio: 'inherit' });
 }
 
 // 1. Limpiar dist anterior
